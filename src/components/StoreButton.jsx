@@ -101,7 +101,8 @@ export default function StoreButton({ link, productName, productId }) {
       store: config.name,
       productName,
       productId,
-      url: link.url
+      url: link.url,
+      price: link.price
     });
   };
 
@@ -114,7 +115,7 @@ export default function StoreButton({ link, productName, productId }) {
       whileHover={{ scale: 1.015, y: -1 }}
       whileTap={{ scale: 0.98 }}
       className={`group relative flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border shadow-sm transition-all duration-150 min-h-[50px] ${config.bgClass}`}
-      aria-label={`Check price and buy ${productName} on ${config.name}`}
+      aria-label={`Buy ${productName} on ${config.name}${link.price ? ` for ${link.price}` : ''}`}
     >
       <div className="flex items-center gap-3 min-w-0">
         <div className="p-1.5 rounded-lg bg-black/25 flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -130,10 +131,15 @@ export default function StoreButton({ link, productName, productId }) {
         </div>
       </div>
 
-      {/* High-converting 'Check Deal' button that encourages opening the link */}
-      <div className="flex items-center gap-1.5 flex-shrink-0">
+      {/* Price tag & Buy CTA */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        {link.price && (
+          <span className="px-2.5 py-1 text-xs sm:text-sm font-extrabold rounded-lg bg-black/30 text-white border border-white/20 shadow-xs">
+            {link.price}
+          </span>
+        )}
         <span className={`px-3 py-1.5 text-xs rounded-lg shadow-xs flex items-center gap-1 transition-colors ${config.badgeClass}`}>
-          <span>Check Deal</span>
+          <span>Buy Now</span>
           <ExternalLink className="w-3.5 h-3.5" />
         </span>
       </div>

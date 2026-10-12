@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight } from 'lucide-react';
-import { isProductNew } from '../utils/productHelpers';
+import { isProductNew, getLowestPrice } from '../utils/productHelpers';
 
 export default function ProductCard({ product, onSelect, index = 0 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const isNew = isProductNew(product.dateAdded);
+  const lowestPrice = getLowestPrice(product);
   const primaryImage = product.images?.[0] || '/products/placeholder.jpg';
 
   const handleKeyDown = (e) => {
@@ -76,14 +77,25 @@ export default function ProductCard({ product, onSelect, index = 0 }) {
         </div>
       </div>
 
-      {/* Card Footer - No prices displayed, directs user to open links */}
+      {/* Card Footer */}
       <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-white/10 flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-          {product.links?.length} {product.links?.length === 1 ? 'store link' : 'stores'}
-        </span>
+        {lowestPrice ? (
+          <div className="flex flex-col">
+            <span className="text-[9px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">
+              Starts from
+            </span>
+            <span className="text-sm font-extrabold text-slate-900 dark:text-white">
+              {lowestPrice}
+            </span>
+          </div>
+        ) : (
+          <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+            {product.links?.length} {product.links?.length === 1 ? 'store link' : 'stores'}
+          </span>
+        )}
 
         <div className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 group-hover:bg-sky-600 dark:bg-white dark:group-hover:bg-sky-400 text-white dark:text-slate-900 text-xs font-bold transition-colors">
-          <span>Check Deals</span>
+          <span>View Deals</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </div>
       </div>
