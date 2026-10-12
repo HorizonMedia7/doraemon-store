@@ -1,97 +1,61 @@
 import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowDown, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import InstagramIcon from './InstagramIcon';
 
 export default function Hero() {
-  const shouldReduceMotion = useReducedMotion();
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.04
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 12 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
-    }
-  };
-
-  const scrollToGrid = () => {
-    const el = document.getElementById('gadgets-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
-    <section className="relative overflow-hidden pt-5 pb-6 sm:pt-10 sm:pb-10 border-b border-slate-200/60 dark:border-white/5">
-      {/* Subtle Ambient Glow */}
-      <div className="absolute inset-0 -z-10 pointer-events-none select-none overflow-hidden">
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-gradient-to-tr from-brand-200/30 via-pink-200/25 to-sky-200/25 dark:from-brand-600/15 dark:via-purple-500/10 dark:to-electric-pink/10 rounded-full blur-[80px]" />
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="flex flex-col items-center"
-        >
-          {/* Top Pill Tag */}
-          <motion.div variants={itemVariants} className="mb-2.5">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-brand-200 dark:border-brand-500/30 bg-white/80 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300 text-xs font-semibold shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-300" />
-              <span>Cataloged from Instagram Reels</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
+    <section className="relative pt-6 pb-6 sm:pt-10 sm:pb-8 border-b border-slate-100 dark:border-white/5">
+      <div className="max-w-4xl mx-auto px-4 text-center">
+        <div className="flex flex-col items-center">
+          
+          {/* Logo Brand Avatar */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="mb-3.5 relative"
+          >
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden p-0.5 bg-gradient-to-tr from-sky-400 via-indigo-500 to-pink-500 shadow-sm">
+              <img
+                src="/logo.jpg"
+                alt="Doraemon Gadgets Avatar"
+                className="w-full h-full object-cover rounded-[14px]"
+              />
             </div>
           </motion.div>
 
-          {/* Straightforward Headline */}
-          <motion.h1
-            variants={itemVariants}
-            className="font-display font-extrabold text-2xl sm:text-4xl md:text-5xl tracking-tight text-slate-900 dark:text-white leading-[1.15]"
-          >
-            Viral Gadgets You Saw on Reels,{' '}
-            <span className="gradient-text-electric">In One Place</span>
-          </motion.h1>
+          {/* Minimal Headline */}
+          <h1 className="font-display font-extrabold text-2xl sm:text-4xl tracking-tight text-slate-900 dark:text-white leading-tight">
+            Doraemon <span className="text-sky-600 dark:text-sky-400">Gadgets</span>
+          </h1>
 
-          {/* Mobile-Friendly CTAs */}
-          <motion.div
-            variants={itemVariants}
-            className="mt-4 sm:mt-5 flex flex-row items-center justify-center gap-2.5 w-full sm:w-auto"
-          >
-            <motion.a
+          {/* Clean Subtitle */}
+          <p className="mt-1.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md">
+            Direct buy links & reviews for viral gadgets featured on{' '}
+            <a
               href="https://www.instagram.com/doraemon_gadgets7"
               target="_blank"
               rel="noopener noreferrer"
-              whileTap={{ scale: 0.96 }}
-              className="flex-1 sm:flex-initial min-h-[44px] px-4 sm:px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 via-rose-600 to-indigo-600 text-white font-bold text-xs sm:text-sm shadow-sm flex items-center justify-center gap-2"
+              className="text-slate-900 dark:text-white font-semibold underline decoration-slate-300 dark:decoration-slate-700 hover:text-sky-600"
             >
-              <InstagramIcon className="w-4 h-4 flex-shrink-0" />
+              @doraemon_gadgets7
+            </a>
+          </p>
+
+          {/* Minimal Follow Action */}
+          <div className="mt-3.5">
+            <a
+              href="https://www.instagram.com/doraemon_gadgets7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white shadow-xs hover:opacity-95 transition-opacity"
+            >
+              <InstagramIcon className="w-3.5 h-3.5" />
               <span>Follow on Instagram</span>
-            </motion.a>
+            </a>
+          </div>
 
-            <motion.button
-              onClick={scrollToGrid}
-              whileTap={{ scale: 0.96 }}
-              className="flex-1 sm:flex-initial min-h-[44px] px-4 sm:px-6 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs"
-            >
-              <span>Browse All</span>
-              <ArrowDown className="w-3.5 h-3.5 text-brand-500" />
-            </motion.button>
-          </motion.div>
-
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -1,14 +1,31 @@
 <!doctype html>
-<html lang="en" class="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     
+    <!-- Inline instant theme detection before first paint -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('doraemon_user_theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+          } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     <!-- Primary Meta Tags -->
     <title>Doraemon Gadgets | Viral & Smart Gadgets Featured on Instagram</title>
     <meta name="title" content="Doraemon Gadgets | Viral & Smart Gadgets Featured on Instagram" />
-    <meta name="description" content="Discover viral, aesthetic, and genius smart gadgets featured in Instagram reels by @doraemon_gadgets7. Tested products with verified affiliate buy links from Amazon, Flipkart, and Meesho." />
-    <meta name="keywords" content="doraemon gadgets, viral gadgets, instagram reels gadgets, cool tech, smart home gadgets, kitchen gadgets, amazon finds, flipkart deals" />
+    <meta name="description" content="Discover viral, aesthetic, and genius smart gadgets featured in Instagram reels by @doraemon_gadgets7. Tested products with verified affiliate buy links." />
+    <meta name="keywords" content="doraemon gadgets, viral gadgets, instagram reels gadgets, cool tech, smart home gadgets, amazon finds, flipkart deals" />
     <meta name="author" content="Doraemon Gadgets (@doraemon_gadgets7)" />
     <meta name="theme-color" content="#ffffff" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -18,26 +35,26 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://doraemongadgets.com/" />
     <meta property="og:title" content="Doraemon Gadgets | Smart & Viral Gadgets Featured on Instagram" />
-    <meta property="og:description" content="Direct links to all the viral gadgets featured in @doraemon_gadgets7 reels. Tested, aesthetic, and genuinely useful." />
-    <meta property="og:image" content="/products/og-preview.jpg" />
+    <meta property="og:description" content="Direct links to all the viral gadgets featured in @doraemon_gadgets7 reels." />
+    <meta property="og:image" content="/logo.jpg" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://doraemongadgets.com/" />
     <meta property="twitter:title" content="Doraemon Gadgets | Smart & Viral Gadgets Featured on Instagram" />
     <meta property="twitter:description" content="Direct links to all the viral gadgets featured in @doraemon_gadgets7 reels." />
-    <meta property="twitter:image" content="/products/og-preview.jpg" />
+    <meta property="twitter:image" content="/logo.jpg" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <!-- Favicon using official Logo -->
+    <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+    <link rel="apple-touch-icon" href="/logo.jpg" />
 
     <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   </head>
-  <body class="selection:bg-brand-500/20 selection:text-brand-900 bg-[#f8fafc] text-slate-800 antialiased">
+  <body class="selection:bg-brand-500/20 selection:text-brand-900 bg-white dark:bg-[#090a0f] text-slate-800 dark:text-slate-100 antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
