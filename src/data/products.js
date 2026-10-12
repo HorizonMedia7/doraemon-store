@@ -40,6 +40,40 @@ export const products = [
         price: "₹520"
       }
     ]
+  },
+  {
+    id: "7-in-1-gadget-cleaning-kit",
+    name: "7-in-1 Multifunctional Electronic Gadget Cleaning Kit",
+    tagline: "Pocket-sized 7-in-1 cleaning tool for AirPods, keyboards, screens & phones",
+    description: "Compact multi-tool cleaner designed for everyday electronics. Features a 3-in-1 foldable earbud cleaning pen, retractable keyboard brush, screen cleaning spray bottle with microfiber swipe, and mechanical keycap puller.",
+    highlights: [
+      "Foldable 3-in-1 earphone pen: silicone crevice tip, mini brush & flocking sponge",
+      "High-density soft brush for keyboard dust and hard-to-reach laptop corners",
+      "Built-in spray bottle with integrated microfiber screen wipe",
+      "Keycap puller for easy mechanical keyboard deep cleaning",
+      "Ultra-compact pocket design for everyday carry"
+    ],
+    category: "Tech Accessories",
+    images: [
+      "/products/cleaner-7in1-1.webp",
+      "/products/cleaner-7in1-2.webp",
+      "/products/cleaner-7in1-3.webp",
+      "/products/cleaner-7in1-4.webp",
+      "/products/cleaner-7in1-5.webp"
+    ],
+    dateAdded: "2026-10-12",
+    links: [
+      {
+        store: "Amazon",
+        url: "https://www.amazon.in/Horizonite-Electronic-Keyboards-Multifunctional-Cleaning/dp/B0FVTFNW17/ref=asc_df_B0FVTFNW17?mcid=f41f94f73bd5328e88c4b87a729d984c&hvadid=709963044953&hvpos=&hvnetw=g&hvrand=5660584923906888826&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9184249&hvtargid=pla-2487936337331&psc=1&hvocijid=5660584923906888826-B0FVTFNW17-&hvexpln=0",
+        price: "₹150"
+      },
+      {
+        store: "Flipkart",
+        url: "https://www.flipkart.com/bsrenterprisez-7in1-cleaning-kit-airpod-earbuds-set-laptops-computers-computers-mobiles/p/itm15090d9654924?pid=CLKGSQZDQ7CXHJZT&lid=LSTCLKGSQZDQ7CXHJZTOPQ3IX&hl_lid=&marketplace=FLIPKART&fm=eyJ3dHAiOiJyZWNvIiwicHJwdCI6InBwIiwibWlkIjoicHJvZHVjdFJlY29tbWVuZGF0aW9uL2FzcGVjdFNpbWlsYXIifQ%3D%3D&pageUID=1791814578014",
+        price: "₹160"
+      }
+    ]
   }
 ];
 
