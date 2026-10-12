@@ -50,9 +50,7 @@ export default function FilterBar({
             aria-label="Sort products by"
           >
             <option value="newest">✨ Newest</option>
-            <option value="name">🔤 Name</option>
-            <option value="price-low">🏷️ Price: Low</option>
-            <option value="price-high">💎 Price: High</option>
+            <option value="name">🔤 Name (A - Z)</option>
           </select>
           <span className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]">▼</span>
         </div>

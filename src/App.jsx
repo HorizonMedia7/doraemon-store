@@ -8,7 +8,7 @@ import FilterBar from './components/FilterBar';
 import ProductCard from './components/ProductCard';
 import ProductModal from './components/ProductModal';
 import Footer from './components/Footer';
-import { getAllCategories, parsePrice } from './utils/productHelpers';
+import { getAllCategories } from './utils/productHelpers';
 import { useProductRouting } from './hooks/useProductRouting';
 
 export default function App() {
@@ -57,11 +57,6 @@ export default function App() {
       }
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name);
-      }
-      if (sortBy === 'price-low' || sortBy === 'price-high') {
-        const minPriceA = a.links?.reduce((min, l) => Math.min(min, parsePrice(l.price)), Infinity) || 0;
-        const minPriceB = b.links?.reduce((min, l) => Math.min(min, parsePrice(l.price)), Infinity) || 0;
-        return sortBy === 'price-low' ? minPriceA - minPriceB : minPriceB - minPriceA;
       }
       return 0;
     });

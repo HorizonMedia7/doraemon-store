@@ -11,7 +11,7 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import StoreButton from './StoreButton';
-import { isProductNew, getLowestPrice } from '../utils/productHelpers';
+import { isProductNew } from '../utils/productHelpers';
 
 export default function ProductModal({ product, onClose }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -89,7 +89,6 @@ export default function ProductModal({ product, onClose }) {
 
   const images = product.images && product.images.length > 0 ? product.images : ['/products/placeholder.jpg'];
   const isNew = isProductNew(product.dateAdded);
-  const lowestPrice = getLowestPrice(product);
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/product/${product.id}`;
@@ -129,7 +128,7 @@ export default function ProductModal({ product, onClose }) {
         className="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm"
       />
 
-      {/* Sheet / Modal Container - Optimized for mobile viewports (dvh) */}
+      {/* Sheet / Modal Container */}
       <motion.div
         ref={modalContentRef}
         initial={{ opacity: 0, y: 120 }}
@@ -199,7 +198,7 @@ export default function ProductModal({ product, onClose }) {
         </div>
 
         {/* Scrollable Body Content */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-6 pb-safe">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-5 pb-safe">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-start">
             
             {/* Left Column: Image Gallery Carousel */}
@@ -265,9 +264,9 @@ export default function ProductModal({ product, onClose }) {
               )}
             </div>
 
-            {/* Right Column: Info & WHERE TO BUY (Straightforward & prominent) */}
+            {/* Right Column: Title -> Direct Buy Links -> Speciality & Features */}
             <div className="space-y-4">
-              {/* Product Title, Tagline & Price */}
+              {/* Product Title (No descriptions, no prices) */}
               <div>
                 <h1
                   id="modal-product-title"
@@ -275,25 +274,17 @@ export default function ProductModal({ product, onClose }) {
                 >
                   {product.name}
                 </h1>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
-                  {product.tagline}
-                </p>
-                {lowestPrice && (
-                  <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
-                    <span>Starting from {lowestPrice}</span>
-                  </div>
-                )}
               </div>
 
-              {/* WHERE TO BUY SECTION - High priority, directly visible */}
-              <div className="space-y-2.5 pt-1">
+              {/* WHERE TO BUY SECTION - Direct & Prominent with Official Store Colors/Logos */}
+              <div className="space-y-2 pt-1">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs uppercase tracking-wider text-slate-900 dark:text-white font-bold flex items-center gap-1.5">
-                    <ShoppingBag className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                    <ShoppingBag className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
                     <span>Where to Buy (Direct Links)</span>
                   </h3>
-                  <span className="text-[10px] text-slate-500 font-medium">
-                    Verified links
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    Verified deals
                   </span>
                 </div>
 
@@ -315,12 +306,12 @@ export default function ProductModal({ product, onClose }) {
                 </div>
               </div>
 
-              {/* Highlights */}
+              {/* Speciality & Features (Replaced 'Why I recommend it') */}
               {product.highlights && product.highlights.length > 0 && (
                 <div className="space-y-2 p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10">
-                  <div className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-amber-700 dark:text-amber-300 font-bold">
+                  <div className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-slate-900 dark:text-white font-bold">
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Why I Recommend It</span>
+                    <span>Speciality & Features</span>
                   </div>
                   <ul className="space-y-1.5">
                     {product.highlights.map((point, i) => (
@@ -333,14 +324,9 @@ export default function ProductModal({ product, onClose }) {
                 </div>
               )}
 
-              {/* Description */}
-              <div className="space-y-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                <p>{product.description}</p>
-              </div>
-
-              {/* Affiliate Disclosure */}
+              {/* Affiliate Disclosure Notice */}
               <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-normal italic pt-1 border-t border-slate-100 dark:border-white/5">
-                Disclosure: Purchases made via these links may earn our channel an affiliate commission with no extra cost to you.
+                Disclosure: Purchases made via these links may earn our channel an affiliate commission at no extra cost to you.
               </p>
 
             </div>
