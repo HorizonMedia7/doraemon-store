@@ -4,7 +4,7 @@ import { Sun, Moon } from 'lucide-react';
 import InstagramIcon from './InstagramIcon';
 import { useTheme } from '../hooks/useTheme';
 
-export default function Navbar() {
+export default function Navbar({ onHome }) {
   const { isDark, toggleTheme } = useTheme();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -12,6 +12,17 @@ export default function Navbar() {
     damping: 30,
     restDelta: 0.001
   });
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    if (onHome) {
+      onHome();
+    } else {
+      window.history.pushState(null, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <>
@@ -28,12 +39,7 @@ export default function Navbar() {
           {/* Logo & Brand */}
           <a
             href="/"
-            onClick={(e) => {
-              if (window.location.pathname === '/') {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }
-            }}
+            onClick={handleLogoClick}
             className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded-xl"
             aria-label="Doraemon Gadgets Homepage"
           >

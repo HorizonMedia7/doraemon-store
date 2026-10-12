@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 /**
- * Hook to manage modal open/close synchronized with browser URL history.
+ * Hook to manage full-page view synchronized with browser URL history.
  * Supports /product/:slug, ?product=:slug, and #product/:slug
  */
 export function useProductRouting(products = []) {
@@ -41,10 +41,12 @@ export function useProductRouting(products = []) {
         const found = products.find((p) => p.id === slug);
         if (found) {
           setSelectedProductId(found.id);
+          window.scrollTo({ top: 0, behavior: 'instant' });
           return;
         }
       }
       setSelectedProductId(null);
+      window.scrollTo({ top: 0, behavior: 'instant' });
     };
 
     // Run on initial load
@@ -54,7 +56,7 @@ export function useProductRouting(products = []) {
     return () => window.removeEventListener('popstate', handleUrlChange);
   }, [getProductIdFromUrl, products]);
 
-  // Open product modal & update URL
+  // Open product page & update URL
   const openProduct = useCallback((product) => {
     if (!product) return;
     setSelectedProductId(product.id);
@@ -62,9 +64,10 @@ export function useProductRouting(products = []) {
     if (window.location.pathname !== newPath) {
       window.history.pushState({ productId: product.id }, '', newPath);
     }
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  // Close modal & restore URL
+  // Return to all products & restore URL
   const closeProduct = useCallback(() => {
     setSelectedProductId(null);
     if (window.location.pathname.startsWith('/product/')) {
@@ -72,6 +75,7 @@ export function useProductRouting(products = []) {
     } else if (window.location.search.includes('product=')) {
       window.history.pushState(null, '', window.location.pathname);
     }
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
   const selectedProduct = products.find((p) => p.id === selectedProductId) || null;
