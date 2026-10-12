@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 export function useTheme() {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('doraemon_theme');
+      const saved = localStorage.getItem('doraemon_theme_v2');
       if (saved) return saved;
     }
-    return 'dark'; // Default to dark mode
+    return 'light'; // Default to light mode
   });
 
   useEffect(() => {
@@ -18,11 +18,11 @@ export function useTheme() {
       root.classList.add('light');
       root.classList.remove('dark');
     }
-    localStorage.setItem('doraemon_theme', theme);
+    localStorage.setItem('doraemon_theme_v2', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
   return { theme, toggleTheme, isDark: theme === 'dark' };

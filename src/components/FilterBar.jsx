@@ -13,9 +13,9 @@ export default function FilterBar({
   totalResults = 0
 }) {
   return (
-    <div className="w-full space-y-4 mb-8">
+    <div className="w-full space-y-3 mb-6">
       {/* Search Input & Sort Row */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="flex items-center gap-2.5">
         {/* Search Bar */}
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -25,14 +25,14 @@ export default function FilterBar({
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search viral gadgets by name, category, or keyword..."
-            className="w-full pl-10 pr-10 py-3 rounded-2xl glass-panel text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/70 transition-all min-h-[46px]"
+            placeholder="Search gadgets, keywords..."
+            className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50 shadow-xs min-h-[44px]"
             aria-label="Search gadgets"
           />
           {searchQuery && (
             <button
               onClick={() => onSearchChange('')}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-white min-w-[36px] justify-center"
               aria-label="Clear search"
             >
               <X className="w-4 h-4" />
@@ -40,51 +40,41 @@ export default function FilterBar({
           )}
         </div>
 
-        {/* Sort Dropdown */}
-        <div className="flex items-center gap-2 self-end sm:self-auto">
-          <div className="relative inline-flex items-center">
-            <SlidersHorizontal className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
-            <select
-              value={sortBy}
-              onChange={(e) => onSortChange(e.target.value)}
-              className="pl-9 pr-8 py-3 rounded-2xl glass-panel text-slate-200 text-xs sm:text-sm font-semibold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 min-h-[46px]"
-              aria-label="Sort products by"
-            >
-              <option value="newest" className="bg-slate-900 text-white">✨ Newest First</option>
-              <option value="name" className="bg-slate-900 text-white">🔤 Name (A - Z)</option>
-              <option value="price-low" className="bg-slate-900 text-white">🏷️ Price: Low to High</option>
-              <option value="price-high" className="bg-slate-900 text-white">💎 Price: High to Low</option>
-            </select>
-            <span className="absolute right-3 pointer-events-none text-slate-400 text-xs">▼</span>
-          </div>
+        {/* Compact Sort Selector */}
+        <div className="relative flex-shrink-0">
+          <SlidersHorizontal className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+          <select
+            value={sortBy}
+            onChange={(e) => onSortChange(e.target.value)}
+            className="pl-8 pr-7 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 text-xs font-semibold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-xs min-h-[44px]"
+            aria-label="Sort products by"
+          >
+            <option value="newest">✨ Newest</option>
+            <option value="name">🔤 Name</option>
+            <option value="price-low">🏷️ Price: Low</option>
+            <option value="price-high">💎 Price: High</option>
+          </select>
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]">▼</span>
         </div>
       </div>
 
-      {/* Categories Horizontal Pills */}
-      <div className="relative">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar py-1">
+      {/* Horizontal Scrollable Category Pills */}
+      <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none no-scrollbar">
           {categories.map((cat) => {
             const isActive = activeCategory === cat;
             return (
               <button
                 key={cat}
                 onClick={() => onSelectCategory(cat)}
-                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors duration-200 min-h-[40px] flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
+                className={`relative px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 min-h-[38px] flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 border ${
                   isActive
-                    ? 'text-white'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                    ? 'border-slate-900 bg-slate-900 text-white dark:border-brand-500 dark:bg-brand-600 shadow-sm'
+                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs'
                 }`}
                 aria-pressed={isActive}
               >
-                {/* Framer Motion Shared Active Pill Background */}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeCategoryPill"
-                    className="absolute inset-0 bg-gradient-to-r from-brand-600 to-indigo-600 rounded-xl shadow-md shadow-brand-500/25 -z-10"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-                {cat === 'All' && <Sparkles className="w-3.5 h-3.5 opacity-70" />}
+                {cat === 'All' && <Sparkles className="w-3 h-3 opacity-80" />}
                 <span>{cat}</span>
               </button>
             );
@@ -92,10 +82,10 @@ export default function FilterBar({
         </div>
       </div>
 
-      {/* Results Count Helper */}
-      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+      {/* Results Count & Quick Reset */}
+      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-0.5">
         <span>
-          Showing <span className="font-semibold text-slate-200">{totalResults}</span> {totalResults === 1 ? 'gadget' : 'gadgets'}
+          Showing <strong className="font-semibold text-slate-700 dark:text-slate-200">{totalResults}</strong> {totalResults === 1 ? 'gadget' : 'gadgets'}
         </span>
         {(searchQuery || activeCategory !== 'All') && (
           <button
@@ -103,9 +93,9 @@ export default function FilterBar({
               onSearchChange('');
               onSelectCategory('All');
             }}
-            className="text-brand-400 hover:underline flex items-center gap-1"
+            className="text-brand-600 dark:text-brand-400 font-semibold hover:underline"
           >
-            <span>Reset filters</span>
+            Reset filters
           </button>
         )}
       </div>

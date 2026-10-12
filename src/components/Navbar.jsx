@@ -25,13 +25,13 @@ export default function Navbar() {
     <>
       {/* Top Reading Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-electric-blue via-brand-500 to-electric-pink z-50 origin-left"
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-brand-500 to-pink-500 z-50 origin-left"
         style={{ scaleX }}
       />
 
-      {/* Sticky Glass Navbar */}
-      <header className="sticky top-0 z-40 w-full glass-nav transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      {/* Sticky Glass Navbar - Compact on mobile */}
+      <header className="sticky top-0 z-40 w-full bg-white/90 dark:bg-[#090a0f]/90 backdrop-blur-md border-b border-slate-200/80 dark:border-white/10 transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
           
           {/* Logo & Brand */}
           <a
@@ -42,34 +42,34 @@ export default function Navbar() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }}
-            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-xl py-1 px-1.5"
+            className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-xl py-1"
             aria-label="Doraemon Gadgets Homepage"
           >
-            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-electric-pink p-0.5 shadow-lg shadow-brand-500/25 group-hover:scale-105 group-hover:shadow-brand-500/40 transition-all duration-200">
-              <div className="w-full h-full bg-[#090a0f] rounded-[10px] flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-amber-300 animate-pulse-subtle" />
+            <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-pink-500 p-0.5 shadow-sm group-hover:scale-105 transition-transform duration-200">
+              <div className="w-full h-full bg-white dark:bg-[#090a0f] rounded-[10px] flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-brand-600 dark:text-amber-300" />
               </div>
             </div>
             
             <div className="flex flex-col">
-              <span className="font-display font-bold text-lg sm:text-xl tracking-tight leading-tight text-white group-hover:text-brand-300 transition-colors">
+              <span className="font-display font-bold text-base sm:text-lg tracking-tight leading-tight text-slate-900 dark:text-white">
                 Doraemon <span className="gradient-text-electric">Gadgets</span>
               </span>
-              <span className="text-[10px] sm:text-xs text-slate-400 font-medium tracking-wider uppercase">
-                Reels Showcase
+              <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 font-semibold tracking-wider uppercase">
+                Reels Finds
               </span>
             </div>
           </a>
 
           {/* Right Action Controls */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            {/* Quick Explore Link */}
+          <div className="flex items-center gap-2">
+            {/* Quick Explore Link - Desktop */}
             <button
               onClick={scrollToGadgets}
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+              className="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
             >
-              <Compass className="w-4 h-4 text-brand-400" />
-              <span>Explore All</span>
+              <Compass className="w-3.5 h-3.5 text-brand-500" />
+              <span>Explore</span>
             </button>
 
             {/* Instagram Follow Pill */}
@@ -77,30 +77,27 @@ export default function Navbar() {
               href="https://www.instagram.com/doraemon_gadgets7"
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white shadow-md hover:shadow-pink-500/25 transition-all min-h-[40px]"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white shadow-sm hover:opacity-95 transition-opacity min-h-[36px]"
               aria-label="Follow Doraemon Gadgets on Instagram"
             >
-              <InstagramIcon className="w-4 h-4" />
+              <InstagramIcon className="w-3.5 h-3.5" />
               <span className="hidden xs:inline">@doraemon_gadgets7</span>
               <span className="xs:hidden">Follow</span>
             </motion.a>
 
             {/* Dark / Light Mode Toggle */}
-            <motion.button
+            <button
               onClick={toggleTheme}
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              className="p-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 min-w-[40px] min-h-[40px] flex items-center justify-center"
+              className="p-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
               aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {isDark ? (
-                <Sun className="w-4 h-4 text-amber-300 transition-transform hover:rotate-45" />
+                <Sun className="w-4 h-4 text-amber-300" />
               ) : (
-                <Moon className="w-4 h-4 text-indigo-400 transition-transform -rotate-12 hover:rotate-0" />
+                <Moon className="w-4 h-4 text-slate-700" />
               )}
-            </motion.button>
+            </button>
           </div>
 
         </div>

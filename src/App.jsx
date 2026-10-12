@@ -71,29 +71,29 @@ export default function App() {
   }, [activeCategory, searchQuery, sortBy]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#090a0f] text-slate-100 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800 dark:bg-[#090a0f] dark:text-slate-100 transition-colors duration-200">
       {/* Sticky Glass Navbar */}
       <Navbar />
 
-      {/* Hero Section */}
+      {/* Hero Section - Compact & Straightforward */}
       <Hero />
 
       {/* Main Showcase / Product Grid Section */}
-      <main id="gadgets-section" className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <main id="gadgets-section" className="flex-1 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 w-full">
         
-        {/* Section Heading */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        {/* Section Heading - Compact on mobile */}
+        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-brand-400 mb-1">
+            <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-bold text-brand-600 dark:text-brand-400 mb-0.5">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Curated Catalog</span>
             </div>
-            <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-white tracking-tight">
+            <h2 className="font-display font-extrabold text-xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">
               Featured In Reels
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-md">
-            Click any gadget for in-depth specs, photo galleries, and verified buy links across top shopping apps.
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md">
+            Click any gadget for photo gallery, highlights, and direct buy links.
           </p>
         </div>
 
@@ -109,11 +109,11 @@ export default function App() {
           totalResults={filteredProducts.length}
         />
 
-        {/* Product Cards Grid with Reordering Animation */}
+        {/* Product Cards Grid with Fast Smooth Layout */}
         {filteredProducts.length > 0 ? (
           <motion.div
             layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-7"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6"
           >
             <AnimatePresence>
               {filteredProducts.map((product, index) => (
@@ -131,25 +131,25 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-3xl glass-panel p-12 text-center max-w-lg mx-auto my-12 space-y-4"
+            className="rounded-2xl bg-white dark:bg-[#11131a] border border-slate-200 dark:border-white/10 p-8 sm:p-12 text-center max-w-md mx-auto my-8 space-y-3.5 shadow-xs"
           >
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-white/5 flex items-center justify-center text-slate-400">
-              <Frown className="w-8 h-8" />
+            <div className="w-14 h-14 mx-auto rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400">
+              <Frown className="w-7 h-7" />
             </div>
-            <h3 className="font-display font-bold text-xl text-white">
+            <h3 className="font-display font-bold text-lg text-slate-900 dark:text-white">
               No gadgets found
             </h3>
-            <p className="text-sm text-slate-400">
-              We couldn't find any gadgets matching &quot;{searchQuery || activeCategory}&quot;. Try adjusting your search keywords or reset filters.
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              We couldn&apos;t find any gadgets matching &quot;{searchQuery || activeCategory}&quot;. Try different keywords or reset filters.
             </p>
             <button
               onClick={() => {
                 setSearchQuery('');
                 setActiveCategory('All');
               }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs sm:text-sm shadow-md transition-all"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 dark:bg-brand-600 hover:bg-brand-600 text-white font-semibold text-xs shadow-xs transition-colors"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-3.5 h-3.5" />
               <span>Reset all filters</span>
             </button>
           </motion.div>
