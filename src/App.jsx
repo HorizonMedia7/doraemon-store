@@ -7,7 +7,6 @@ import Hero from './components/Hero';
 import FilterBar from './components/FilterBar';
 import ProductCard from './components/ProductCard';
 import ProductModal from './components/ProductModal';
-import AboutSection from './components/AboutSection';
 import Footer from './components/Footer';
 import { getAllCategories, parsePrice } from './utils/productHelpers';
 import { useProductRouting } from './hooks/useProductRouting';
@@ -81,7 +80,7 @@ export default function App() {
       {/* Main Showcase / Product Grid Section */}
       <main id="gadgets-section" className="flex-1 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 w-full">
         
-        {/* Section Heading - Compact on mobile */}
+        {/* Section Heading */}
         <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-bold text-brand-600 dark:text-brand-400 mb-0.5">
@@ -156,9 +155,6 @@ export default function App() {
         )}
 
       </main>
-
-      {/* Creator Story / About Section */}
-      <AboutSection />
 
       {/* Footer with Mandatory Affiliate Disclosure */}
       <Footer />
