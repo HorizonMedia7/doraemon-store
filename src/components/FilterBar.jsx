@@ -1,6 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Search, X, SlidersHorizontal, Sparkles } from 'lucide-react';
+import {
+  Search,
+  X,
+  SlidersHorizontal,
+  Sparkles,
+  Grid2X2,
+  LayoutList,
+  Rows3
+} from 'lucide-react';
 
 export default function FilterBar({
   categories = [],
@@ -10,10 +18,12 @@ export default function FilterBar({
   onSearchChange,
   sortBy = 'newest',
   onSortChange,
-  totalResults = 0
+  totalResults = 0,
+  viewMode = 'grid',
+  onViewChange
 }) {
   return (
-    <div className="w-full space-y-3 mb-6">
+    <div className="w-full space-y-3 mb-5">
       {/* Search Input & Sort Row */}
       <div className="flex items-center gap-2.5">
         {/* Search Bar */}
@@ -26,7 +36,7 @@ export default function FilterBar({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search gadgets, keywords..."
-            className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50 shadow-xs min-h-[44px]"
+            className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-xs min-h-[44px]"
             aria-label="Search gadgets"
           />
           {searchQuery && (
@@ -46,7 +56,7 @@ export default function FilterBar({
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value)}
-            className="pl-8 pr-7 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 text-xs font-semibold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-xs min-h-[44px]"
+            className="pl-8 pr-7 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 text-xs font-semibold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-xs min-h-[44px]"
             aria-label="Sort products by"
           >
             <option value="newest">✨ Newest</option>
@@ -65,9 +75,9 @@ export default function FilterBar({
               <button
                 key={cat}
                 onClick={() => onSelectCategory(cat)}
-                className={`relative px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 min-h-[38px] flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 border ${
+                className={`relative px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 min-h-[38px] flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 border ${
                   isActive
-                    ? 'border-slate-900 bg-slate-900 text-white dark:border-brand-500 dark:bg-brand-600 shadow-sm'
+                    ? 'border-slate-900 bg-slate-900 text-white dark:border-sky-500 dark:bg-sky-600 shadow-sm'
                     : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs'
                 }`}
                 aria-pressed={isActive}
@@ -80,21 +90,77 @@ export default function FilterBar({
         </div>
       </div>
 
-      {/* Results Count & Quick Reset */}
-      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-0.5">
-        <span>
-          Showing <strong className="font-semibold text-slate-700 dark:text-slate-200">{totalResults}</strong> {totalResults === 1 ? 'gadget' : 'gadgets'}
-        </span>
-        {(searchQuery || activeCategory !== 'All') && (
-          <button
-            onClick={() => {
-              onSearchChange('');
-              onSelectCategory('All');
-            }}
-            className="text-brand-600 dark:text-brand-400 font-semibold hover:underline"
+      {/* Results Count & View Mode Switcher */}
+      <div className="flex items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400 px-0.5 pt-0.5">
+        <div className="flex items-center gap-2">
+          <span>
+            Showing <strong className="font-semibold text-slate-700 dark:text-slate-200">{totalResults}</strong> {totalResults === 1 ? 'gadget' : 'gadgets'}
+          </span>
+          {(searchQuery || activeCategory !== 'All') && (
+            <button
+              onClick={() => {
+                onSearchChange('');
+                onSelectCategory('All');
+              }}
+              className="text-sky-600 dark:text-sky-400 font-semibold hover:underline"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+
+        {/* View Switcher: Grid (2-col mobile) / List / Full Card */}
+        {onViewChange && (
+          <div
+            className="flex items-center gap-0.5 bg-slate-100 dark:bg-white/5 p-1 rounded-xl border border-slate-200/80 dark:border-white/10"
+            role="group"
+            aria-label="Product display layout"
           >
-            Reset filters
-          </button>
+            <button
+              type="button"
+              onClick={() => onViewChange('grid')}
+              title="Compact Grid (2 per row on mobile)"
+              aria-label="Compact Grid View"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
+                viewMode === 'grid'
+                  ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
+              }`}
+            >
+              <Grid2X2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Grid</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onViewChange('list')}
+              title="Compact List View"
+              aria-label="List View"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
+                viewMode === 'list'
+                  ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
+              }`}
+            >
+              <LayoutList className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">List</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onViewChange('detailed')}
+              title="Full Card View (1 per row on mobile)"
+              aria-label="Full Card View"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
+                viewMode === 'detailed'
+                  ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
+              }`}
+            >
+              <Rows3 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Full</span>
+            </button>
+          </div>
         )}
       </div>
     </div>
