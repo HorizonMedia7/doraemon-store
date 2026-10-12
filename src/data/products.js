@@ -1,5 +1,5 @@
 /**
- * Doraemon Gadgets - Product Database
+ * Doraemon Gadget Store - Product Database
  * 
  * To add a new product:
  * 1. Put product photos into `public/products/`

@@ -1,5 +1,5 @@
 /**
- * Helper utilities for Doraemon Gadgets
+ * Helper utilities for Doraemon Gadget Store
  */
 
 /**

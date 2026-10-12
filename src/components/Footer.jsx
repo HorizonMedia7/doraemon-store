@@ -16,12 +16,12 @@ export default function Footer() {
           <div className="flex items-center gap-2.5">
             <img
               src="/logo.jpg"
-              alt="Doraemon Gadgets"
+              alt="Doraemon Gadget Store"
               className="w-7 h-7 rounded-full object-cover border border-slate-200/80 dark:border-white/10"
             />
             <div>
               <span className="font-display font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                Doraemon <span className="text-sky-600 dark:text-sky-400">Gadgets</span>
+                Doraemon <span className="text-sky-600 dark:text-sky-400">Gadget Store</span>
               </span>
               <p className="text-[11px] text-slate-400">
                 Curated viral gadgets featured on Instagram Reels
@@ -56,9 +56,15 @@ export default function Footer() {
           As an affiliate, I may earn a commission from qualifying purchases at no extra cost to you. Product prices and deals are determined by the respective stores (Amazon, Flipkart, Meesho, etc.).
         </div>
 
+        {/* Development & Vercel Hobby Notice */}
+        <div className="p-3 rounded-xl bg-amber-500/5 dark:bg-amber-400/[0.03] border border-amber-500/20 dark:border-amber-400/10 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+          <strong className="text-amber-700 dark:text-amber-400 font-semibold mr-1">Development & Hosting Notice:</strong>
+          This website is currently under active personal development and testing, deployed non-commercially under the free Vercel Hobby tier for educational and demonstration purposes. No commercial transactions are directly processed on this platform. An upgrade to a commercial plan will occur upon official release.
+        </div>
+
         {/* Bottom copyright */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400 dark:text-slate-500 pt-1">
-          <p>© {new Date().getFullYear()} Doraemon Gadgets.</p>
+          <p>© {new Date().getFullYear()} Doraemon Gadget Store.</p>
           <div className="flex items-center gap-1">
             <span>Made with</span>
             <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />

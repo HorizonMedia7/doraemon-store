@@ -18,7 +18,7 @@ export default function Hero() {
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden p-0.5 bg-gradient-to-tr from-sky-400 via-indigo-500 to-pink-500 shadow-sm">
               <img
                 src="/logo.jpg"
-                alt="Doraemon Gadgets Avatar"
+                alt="Doraemon Gadget Store Avatar"
                 className="w-full h-full object-cover rounded-[14px]"
               />
             </div>
@@ -26,7 +26,7 @@ export default function Hero() {
 
           {/* Minimal Headline */}
           <h1 className="font-display font-extrabold text-2xl sm:text-4xl tracking-tight text-slate-900 dark:text-white leading-tight">
-            Doraemon <span className="text-sky-600 dark:text-sky-400">Gadgets</span>
+            Doraemon <span className="text-sky-600 dark:text-sky-400">Gadget Store</span>
           </h1>
 
           {/* Clean Subtitle */}

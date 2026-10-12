@@ -41,16 +41,16 @@ export default function Navbar({ onHome }) {
             href="/"
             onClick={handleLogoClick}
             className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded-xl"
-            aria-label="Doraemon Gadgets Homepage"
+            aria-label="Doraemon Gadget Store Homepage"
           >
             <img
               src="/logo.jpg"
-              alt="Doraemon Gadgets"
+              alt="Doraemon Gadget Store"
               className="w-8 h-8 rounded-full object-cover shadow-xs border border-slate-200/80 dark:border-white/10 group-hover:scale-105 transition-transform"
             />
             
             <span className="font-display font-bold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white">
-              Doraemon <span className="text-sky-600 dark:text-sky-400">Gadgets</span>
+              Doraemon <span className="text-sky-600 dark:text-sky-400">Gadget Store</span>
             </span>
           </a>
 
@@ -63,7 +63,7 @@ export default function Navbar({ onHome }) {
               rel="noopener noreferrer"
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 transition-colors shadow-xs min-h-[34px]"
-              aria-label="Follow Doraemon Gadgets on Instagram"
+              aria-label="Follow Doraemon Gadget Store on Instagram"
             >
               <InstagramIcon className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">@doraemon_gadgets7</span>
