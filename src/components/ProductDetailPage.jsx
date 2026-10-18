@@ -51,12 +51,13 @@ export default function ProductDetailPage({ product, onBack }) {
     }
   };
 
+  // Linear image navigation without looping
   const nextImage = () => {
-    setActiveImageIndex((prev) => (prev + 1) % images.length);
+    setActiveImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : prev));
   };
 
   const prevImage = () => {
-    setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
   // Lock background scroll when lightbox is open
@@ -89,7 +90,7 @@ export default function ProductDetailPage({ product, onBack }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isLightboxOpen, images.length]);
 
-  // Touch handlers for swipe gestures (works for both card & full-screen lightbox)
+  // Touch handlers for swipe gestures (linear scrolling, no wrap around)
   const handleTouchStart = (e) => {
     if (!e.touches || e.touches.length === 0) return;
     touchStartX.current = e.touches[0].clientX;
@@ -198,42 +199,45 @@ export default function ProductDetailPage({ product, onBack }) {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 pointer-events-none"
                 />
 
-                {/* Click to Expand Pill */}
-                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-black/60 text-white backdrop-blur-xs flex items-center gap-1.5 shadow-xs pointer-events-none group-hover:bg-black/80 transition-colors">
-                  <Maximize2 className="w-3 h-3" />
+                {/* Minimal Expand Icon/Pill - unobtrusive on mobile */}
+                <div className="absolute top-2 right-2 sm:top-3 sm:right-3 p-1.5 sm:px-2.5 sm:py-1 rounded-full sm:rounded-lg text-[10px] sm:text-[11px] font-semibold bg-black/40 sm:bg-black/50 text-white/90 backdrop-blur-xs flex items-center gap-1.5 shadow-xs pointer-events-none group-hover:bg-black/70 transition-colors">
+                  <Maximize2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   <span className="hidden sm:inline">Click to expand</span>
-                  <span className="sm:hidden">Expand</span>
                 </div>
 
-                {/* Arrow Controls on Card */}
+                {/* Compact Arrow Controls on Card (No loop: hidden when at start/end) */}
                 {images.length > 1 && (
                   <>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        prevImage();
-                      }}
-                      className="absolute left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 dark:bg-black/75 hover:bg-white text-slate-800 dark:text-white shadow-xs min-h-[38px] min-w-[38px] flex items-center justify-center focus:outline-none transition-transform active:scale-95"
-                      aria-label="Previous photo"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        nextImage();
-                      }}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 dark:bg-black/75 hover:bg-white text-slate-800 dark:text-white shadow-xs min-h-[38px] min-w-[38px] flex items-center justify-center focus:outline-none transition-transform active:scale-95"
-                      aria-label="Next photo"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                    {activeImageIndex > 0 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          prevImage();
+                        }}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black/35 hover:bg-black/60 text-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center focus:outline-none transition-transform active:scale-90 cursor-pointer"
+                        aria-label="Previous photo"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      </button>
+                    )}
+                    {activeImageIndex < images.length - 1 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          nextImage();
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black/35 hover:bg-black/60 text-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center focus:outline-none transition-transform active:scale-90 cursor-pointer"
+                        aria-label="Next photo"
+                      >
+                        <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      </button>
+                    )}
                   </>
                 )}
 
-                {/* Counter Badge */}
+                {/* Subtle Counter Badge (Minimal size on mobile) */}
                 {images.length > 1 && (
-                  <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg text-xs font-bold bg-black/70 text-white backdrop-blur-xs whitespace-nowrap">
+                  <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-black/40 sm:bg-black/60 text-white/90 backdrop-blur-xs whitespace-nowrap tracking-wide">
                     {activeImageIndex + 1} / {images.length}
                   </div>
                 )}
@@ -364,40 +368,40 @@ export default function ProductDetailPage({ product, onBack }) {
             {/* Exit / Close Button (Top-Right) */}
             <button
               onClick={() => setIsLightboxOpen(false)}
-              className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center shadow-lg"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 p-2 sm:p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[36px] min-h-[36px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center shadow-lg"
               aria-label="Exit full image window"
               title="Exit (Esc)"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
-            {/* Previous Image Button (Left) */}
-            {images.length > 1 && (
+            {/* Previous Image Button (Left) - Hidden at first image (no loop) */}
+            {images.length > 1 && activeImageIndex > 0 && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   prevImage();
                 }}
-                className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-white/10 hover:bg-white/25 text-white backdrop-blur-md transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[48px] min-h-[48px] flex items-center justify-center shadow-lg"
+                className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/25 text-white backdrop-blur-md transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[36px] min-h-[36px] sm:min-w-[48px] sm:min-h-[48px] flex items-center justify-center shadow-lg"
                 aria-label="Previous photo"
                 title="Previous (Left arrow or swipe right)"
               >
-                <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
+                <ChevronLeft className="w-5 h-5 sm:w-7 sm:h-7" />
               </button>
             )}
 
-            {/* Next Image Button (Right) */}
-            {images.length > 1 && (
+            {/* Next Image Button (Right) - Hidden at last image (no loop) */}
+            {images.length > 1 && activeImageIndex < images.length - 1 && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   nextImage();
                 }}
-                className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-white/10 hover:bg-white/25 text-white backdrop-blur-md transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[48px] min-h-[48px] flex items-center justify-center shadow-lg"
+                className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/25 text-white backdrop-blur-md transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[36px] min-h-[36px] sm:min-w-[48px] sm:min-h-[48px] flex items-center justify-center shadow-lg"
                 aria-label="Next photo"
                 title="Next (Right arrow or swipe left)"
               >
-                <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
+                <ChevronRight className="w-5 h-5 sm:w-7 sm:h-7" />
               </button>
             )}
 
@@ -424,7 +428,7 @@ export default function ProductDetailPage({ product, onBack }) {
               className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-[92vw]"
             >
               {/* Counter Pill - Clean, single-line, current / total only */}
-              <div className="px-4 py-1.5 rounded-full bg-black/75 text-white backdrop-blur-md border border-white/10 text-xs font-bold tracking-wider shadow-lg whitespace-nowrap">
+              <div className="px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-black/75 text-white backdrop-blur-md border border-white/10 text-[11px] sm:text-xs font-bold tracking-wider shadow-lg whitespace-nowrap">
                 {activeImageIndex + 1} / {images.length}
               </div>
 
@@ -435,7 +439,7 @@ export default function ProductDetailPage({ product, onBack }) {
                     <button
                       key={idx}
                       onClick={() => setActiveImageIndex(idx)}
-                      className={`relative w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all cursor-pointer ${
+                      className={`relative w-9 h-9 sm:w-12 sm:h-12 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all cursor-pointer ${
                         activeImageIndex === idx
                           ? 'border-sky-400 scale-105'
                           : 'border-transparent opacity-60 hover:opacity-100'
