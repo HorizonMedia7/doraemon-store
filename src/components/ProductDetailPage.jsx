@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -10,12 +10,20 @@ import {
   CheckCircle2,
   ShoppingBag,
   Maximize2,
+  ArrowRight,
   X
 } from 'lucide-react';
 import StoreButton from './StoreButton';
+import ProductCard from './ProductCard';
 import { isProductNew } from '../utils/productHelpers';
 
-export default function ProductDetailPage({ product, onBack }) {
+export default function ProductDetailPage({
+  product,
+  allProducts = [],
+  onSelectProduct,
+  onViewCategory,
+  onBack
+}) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [copiedShare, setCopiedShare] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -37,6 +45,19 @@ export default function ProductDetailPage({ product, onBack }) {
 
   const images = product.images && product.images.length > 0 ? product.images : ['/products/placeholder.jpg'];
   const isNew = isProductNew(product.dateAdded);
+
+  // Compute up to 4 similar recommendations (prioritizing same category)
+  const recommendations = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) return [];
+    const others = allProducts.filter((p) => p.id !== product.id);
+    const sameCat = others.filter(
+      (p) => p.category && p.category.toLowerCase() === product.category?.toLowerCase()
+    );
+    const diffCat = others.filter(
+      (p) => !p.category || p.category.toLowerCase() !== product.category?.toLowerCase()
+    );
+    return [...sameCat, ...diffCat].slice(0, 4);
+  }, [allProducts, product?.id, product?.category]);
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/product/${product.id}`;
@@ -138,13 +159,13 @@ export default function ProductDetailPage({ product, onBack }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 12 }}
         transition={{ duration: 0.25 }}
-        className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-5 sm:py-8 w-full"
+        className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-5 sm:py-8 pb-14 sm:pb-20 w-full"
       >
         {/* Top Navigation Row: Back button & Share */}
         <div className="flex items-center justify-between gap-3 mb-6">
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white text-xs sm:text-sm font-semibold shadow-xs hover:border-slate-300 transition-colors"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white text-xs sm:text-sm font-semibold shadow-xs hover:border-slate-300 transition-colors cursor-pointer"
             aria-label="Back to all gadgets"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -153,7 +174,7 @@ export default function ProductDetailPage({ product, onBack }) {
 
           <button
             onClick={handleShare}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-semibold shadow-xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
             title="Share product link"
             aria-label="Share product link"
           >
@@ -343,6 +364,58 @@ export default function ProductDetailPage({ product, onBack }) {
 
           </div>
         </div>
+
+        {/* Similar Recommendations Section (Shown instead of footer on product page) */}
+        {recommendations.length > 0 && (
+          <section className="mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-slate-200/80 dark:border-white/10">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <div>
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-1">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Similar Recommendations</span>
+                </div>
+                <h2 className="font-display font-bold text-lg sm:text-2xl text-slate-900 dark:text-white">
+                  You Might Also Like
+                </h2>
+              </div>
+              {product.category && (
+                <span className="text-xs text-slate-400 hidden sm:inline">
+                  Featured in {product.category}
+                </span>
+              )}
+            </div>
+
+            {/* 4 Recommendations in Responsive Grid View */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+              {recommendations.map((rec, idx) => (
+                <ProductCard
+                  key={rec.id}
+                  product={rec}
+                  onSelect={onSelectProduct}
+                  index={idx}
+                  viewMode="grid"
+                />
+              ))}
+            </div>
+
+            {/* Show More Similar Products Button */}
+            <div className="mt-8 sm:mt-10 pt-2 flex flex-col items-center justify-center text-center">
+              <button
+                onClick={() => onViewCategory && onViewCategory(product.category)}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all active:scale-95 group cursor-pointer"
+              >
+                <span>Show more similar products</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+              {product.category && (
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
+                  View all gadgets in <span className="font-semibold text-slate-700 dark:text-slate-300">{product.category}</span>
+                </p>
+              )}
+            </div>
+          </section>
+        )}
       </motion.main>
 
       {/* Full Image Window (Lightbox Modal with Mobile Swipe Support) */}

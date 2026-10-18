@@ -34,6 +34,23 @@ export default function App() {
   // Deep-linking URL routing for full page product view
   const { selectedProduct, openProduct, closeProduct } = useProductRouting(productsData);
 
+  // Navigate from recommendations to filtered category on main catalog
+  const handleViewCategory = (category) => {
+    closeProduct();
+    if (category) {
+      setActiveCategory(category);
+    }
+    setSearchQuery('');
+    setTimeout(() => {
+      const element = document.getElementById('gadgets-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 60);
+  };
+
   // Auto-generate categories from products data
   const categories = useMemo(() => {
     return getAllCategories(productsData);
@@ -97,76 +114,81 @@ export default function App() {
       <Navbar onHome={closeProduct} />
 
       {selectedProduct ? (
-        /* Full Page Dedicated Product View */
+        /* Full Page Dedicated Product View with Similar Recommendations */
         <ProductDetailPage
           product={selectedProduct}
+          allProducts={productsData}
+          onSelectProduct={openProduct}
+          onViewCategory={handleViewCategory}
           onBack={closeProduct}
         />
       ) : (
-        /* Main Catalog & Grid View (Hero removed for streamlined direct browsing) */
-        <main id="gadgets-section" className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6 w-full">
-          <FilterBar
-            categories={categories}
-            activeCategory={activeCategory}
-            onSelectCategory={setActiveCategory}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            totalResults={filteredProducts.length}
-            viewMode={viewMode}
-            onViewChange={handleViewChange}
-          />
+        /* Main Catalog & Grid View */
+        <>
+          <main id="gadgets-section" className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6 w-full">
+            <FilterBar
+              categories={categories}
+              activeCategory={activeCategory}
+              onSelectCategory={setActiveCategory}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              totalResults={filteredProducts.length}
+              viewMode={viewMode}
+              onViewChange={handleViewChange}
+            />
 
-          {filteredProducts.length > 0 ? (
-            <motion.div
-              layout
-              className={gridContainerClass}
-            >
-              <AnimatePresence>
-                {filteredProducts.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    index={index}
-                    viewMode={viewMode}
-                    onSelect={openProduct}
-                  />
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="rounded-2xl bg-slate-50 dark:bg-[#11131a] border border-slate-200/80 dark:border-white/10 p-8 sm:p-12 text-center max-w-md mx-auto my-8 space-y-3 shadow-xs"
-            >
-              <div className="w-12 h-12 mx-auto rounded-xl bg-white dark:bg-white/5 flex items-center justify-center text-slate-400">
-                <Frown className="w-6 h-6" />
-              </div>
-              <h3 className="font-display font-bold text-base text-slate-900 dark:text-white">
-                No gadgets found
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                No gadgets match &quot;{searchQuery || activeCategory}&quot;. Try different keywords or reset filters.
-              </p>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setActiveCategory('All');
-                }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-colors"
+            {filteredProducts.length > 0 ? (
+              <motion.div
+                layout
+                className={gridContainerClass}
               >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Reset filters</span>
-              </button>
-            </motion.div>
-          )}
-        </main>
-      )}
+                <AnimatePresence>
+                  {filteredProducts.map((product, index) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      index={index}
+                      viewMode={viewMode}
+                      onSelect={openProduct}
+                    />
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="rounded-2xl bg-slate-50 dark:bg-[#11131a] border border-slate-200/80 dark:border-white/10 p-8 sm:p-12 text-center max-w-md mx-auto my-8 space-y-3 shadow-xs"
+              >
+                <div className="w-12 h-12 mx-auto rounded-xl bg-white dark:bg-white/5 flex items-center justify-center text-slate-400">
+                  <Frown className="w-6 h-6" />
+                </div>
+                <h3 className="font-display font-bold text-base text-slate-900 dark:text-white">
+                  No gadgets found
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  No gadgets match &quot;{searchQuery || activeCategory}&quot;. Try different keywords or reset filters.
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setActiveCategory('All');
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-colors cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Reset filters</span>
+                </button>
+              </motion.div>
+            )}
+          </main>
 
-      {/* Minimal Footer with Mandatory Affiliate Disclosure */}
-      <Footer />
+          {/* Minimal Footer with Mandatory Affiliate Disclosure on Main Catalog */}
+          <Footer />
+        </>
+      )}
     </div>
   );
 }
