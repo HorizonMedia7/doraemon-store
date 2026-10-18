@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -19,6 +19,13 @@ export default function ProductDetailPage({ product, onBack }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [copiedShare, setCopiedShare] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  // Swipe gesture touch tracking
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const touchEndX = useRef(0);
+  const touchEndY = useRef(0);
+  const hasSwiped = useRef(false);
 
   // Scroll to top when product opens
   useEffect(() => {
@@ -82,6 +89,47 @@ export default function ProductDetailPage({ product, onBack }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isLightboxOpen, images.length]);
 
+  // Touch handlers for swipe gestures (works for both card & full-screen lightbox)
+  const handleTouchStart = (e) => {
+    if (!e.touches || e.touches.length === 0) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchEndX.current = e.touches[0].clientX;
+    touchEndY.current = e.touches[0].clientY;
+    hasSwiped.current = false;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!e.touches || e.touches.length === 0) return;
+    touchEndX.current = e.touches[0].clientX;
+    touchEndY.current = e.touches[0].clientY;
+    const diffX = touchStartX.current - touchEndX.current;
+    if (Math.abs(diffX) > 15) {
+      hasSwiped.current = true;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    const deltaX = touchStartX.current - touchEndX.current;
+    const deltaY = touchStartY.current - touchEndY.current;
+    const minSwipeDistance = 40;
+
+    // Trigger only if horizontal swipe exceeds vertical movement & minimum distance
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX > 0) {
+        // Swiped Left -> Next Image
+        nextImage();
+      } else {
+        // Swiped Right -> Previous Image
+        prevImage();
+      }
+    }
+
+    setTimeout(() => {
+      hasSwiped.current = false;
+    }, 120);
+  };
+
   return (
     <>
       <motion.main
@@ -128,10 +176,16 @@ export default function ProductDetailPage({ product, onBack }) {
             
             {/* Left Column: Image Gallery (5 cols) */}
             <div className="lg:col-span-5 space-y-3">
-              {/* Main Active Image (Click to expand) */}
+              {/* Main Active Image (Click to expand + swipe support on mobile) */}
               <div
-                onClick={() => setIsLightboxOpen(true)}
-                className="group relative aspect-[4/3] sm:aspect-square w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-white/10 select-none shadow-xs cursor-zoom-in"
+                onClick={() => {
+                  if (hasSwiped.current) return;
+                  setIsLightboxOpen(true);
+                }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                className="group relative aspect-[4/3] sm:aspect-square w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-white/10 select-none shadow-xs cursor-zoom-in touch-pan-y"
                 title="Click to view full image"
               >
                 <motion.img
@@ -141,7 +195,7 @@ export default function ProductDetailPage({ product, onBack }) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.2 }}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 pointer-events-none"
                 />
 
                 {/* Click to Expand Pill */}
@@ -179,7 +233,7 @@ export default function ProductDetailPage({ product, onBack }) {
 
                 {/* Counter Badge */}
                 {images.length > 1 && (
-                  <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg text-xs font-bold bg-black/70 text-white backdrop-blur-xs">
+                  <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg text-xs font-bold bg-black/70 text-white backdrop-blur-xs whitespace-nowrap">
                     {activeImageIndex + 1} / {images.length}
                   </div>
                 )}
@@ -192,7 +246,7 @@ export default function ProductDetailPage({ product, onBack }) {
                     <button
                       key={idx}
                       onClick={() => setActiveImageIndex(idx)}
-                      className={`relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all ${
+                      className={`relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all cursor-pointer ${
                         activeImageIndex === idx
                           ? 'border-sky-500 ring-2 ring-sky-500/20'
                           : 'border-slate-200/80 dark:border-white/10 opacity-70 hover:opacity-100'
@@ -287,7 +341,7 @@ export default function ProductDetailPage({ product, onBack }) {
         </div>
       </motion.main>
 
-      {/* Full Image Window (Lightbox Modal) */}
+      {/* Full Image Window (Lightbox Modal with Mobile Swipe Support) */}
       <AnimatePresence>
         {isLightboxOpen && (
           <motion.div
@@ -295,8 +349,14 @@ export default function ProductDetailPage({ product, onBack }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={() => setIsLightboxOpen(false)}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-3 sm:p-6"
+            onClick={() => {
+              if (hasSwiped.current) return;
+              setIsLightboxOpen(false);
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-3 sm:p-6 select-none touch-pan-y"
             role="dialog"
             aria-modal="true"
             aria-label="Full image viewer"
@@ -320,7 +380,7 @@ export default function ProductDetailPage({ product, onBack }) {
                 }}
                 className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-white/10 hover:bg-white/25 text-white backdrop-blur-md transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[48px] min-h-[48px] flex items-center justify-center shadow-lg"
                 aria-label="Previous photo"
-                title="Previous (Left arrow)"
+                title="Previous (Left arrow or swipe right)"
               >
                 <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
               </button>
@@ -335,13 +395,13 @@ export default function ProductDetailPage({ product, onBack }) {
                 }}
                 className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-white/10 hover:bg-white/25 text-white backdrop-blur-md transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[48px] min-h-[48px] flex items-center justify-center shadow-lg"
                 aria-label="Next photo"
-                title="Next (Right arrow)"
+                title="Next (Right arrow or swipe left)"
               >
                 <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
               </button>
             )}
 
-            {/* Central Full-Resolution Image */}
+            {/* Central Full-Resolution Image (Supports touch swipe) */}
             <div
               onClick={(e) => e.stopPropagation()}
               className="relative max-h-[82vh] max-w-[90vw] sm:max-w-[85vw] flex items-center justify-center select-none"
@@ -354,7 +414,7 @@ export default function ProductDetailPage({ product, onBack }) {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.2 }}
-                className="max-h-[80vh] max-w-[90vw] sm:max-w-[85vw] object-contain rounded-2xl shadow-2xl"
+                className="max-h-[80vh] max-w-[90vw] sm:max-w-[85vw] object-contain rounded-2xl shadow-2xl pointer-events-none"
               />
             </div>
 
@@ -363,11 +423,9 @@ export default function ProductDetailPage({ product, onBack }) {
               onClick={(e) => e.stopPropagation()}
               className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-[92vw]"
             >
-              {/* Counter Pill */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/70 text-white backdrop-blur-md border border-white/10 text-xs font-semibold shadow-lg">
-                <span>{activeImageIndex + 1} / {images.length}</span>
-                <span className="text-white/40">•</span>
-                <span className="text-slate-300 max-w-[180px] sm:max-w-xs truncate">{product.name}</span>
+              {/* Counter Pill - Clean, single-line, current / total only */}
+              <div className="px-4 py-1.5 rounded-full bg-black/75 text-white backdrop-blur-md border border-white/10 text-xs font-bold tracking-wider shadow-lg whitespace-nowrap">
+                {activeImageIndex + 1} / {images.length}
               </div>
 
               {/* Thumbnails in Lightbox */}
