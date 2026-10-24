@@ -10,7 +10,7 @@ export default function ProductCard({
   viewMode = 'grid'
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const isNew = isProductNew(product.dateAdded);
+  const isNew = product.show_new_tag !== undefined ? Boolean(product.show_new_tag) : isProductNew(product.dateAdded);
   const lowestPrice = getLowestPrice(product);
   const primaryImage = product.images?.[0] || '/products/placeholder.jpg';
   const shouldShowTag = product.show_tag !== false;

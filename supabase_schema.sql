@@ -16,14 +16,16 @@ create table if not exists public.products (
   is_published boolean default true,
   featured boolean default false,
   show_tag boolean default true,
+  show_new_tag boolean default true,
   click_count integer default 0,
   date_added text default to_char(now(), 'YYYY-MM-DD'),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- Migration helper if table already exists:
+-- Migration helpers if table already exists:
 alter table public.products add column if not exists show_tag boolean default true;
+alter table public.products add column if not exists show_new_tag boolean default true;
 
 -- 2. Create click analytics table
 create table if not exists public.click_events (

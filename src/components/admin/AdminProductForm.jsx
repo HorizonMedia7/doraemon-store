@@ -42,6 +42,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const [isPublished, setIsPublished] = useState(product?.is_published ?? true);
   const [featured, setFeatured] = useState(product?.featured ?? false);
   const [showTag, setShowTag] = useState(product?.show_tag ?? true);
+  const [showNewTag, setShowNewTag] = useState(product?.show_new_tag ?? true);
 
   // Highlights / bullet points
   const [highlights, setHighlights] = useState(
@@ -217,6 +218,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
       is_published: isPublished,
       featured,
       show_tag: showTag,
+      show_new_tag: showNewTag,
       dateAdded: product?.dateAdded || new Date().toISOString().slice(0, 10)
     };
 
@@ -752,6 +754,37 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
                     showTag ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* NEW Tag Badge Visibility Toggle */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${showNewTag ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-200 text-slate-500'}`}>
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                    Show "NEW" Badge
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    {showNewTag ? 'Green "NEW" badge is displayed on the product photo.' : '"NEW" badge is hidden from the card.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowNewTag(!showNewTag)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  showNewTag ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    showNewTag ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>

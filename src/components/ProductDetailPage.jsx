@@ -44,7 +44,7 @@ export default function ProductDetailPage({
   if (!product) return null;
 
   const images = product.images && product.images.length > 0 ? product.images : ['/products/placeholder.jpg'];
-  const isNew = isProductNew(product.dateAdded);
+  const isNew = product.show_new_tag !== undefined ? Boolean(product.show_new_tag) : isProductNew(product.dateAdded);
 
   // Compute up to 4 similar recommendations (prioritizing same category)
   const recommendations = useMemo(() => {

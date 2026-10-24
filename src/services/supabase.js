@@ -66,6 +66,7 @@ export async function getProducts(includeDrafts = false) {
       is_published: item.is_published ?? true,
       featured: item.featured ?? false,
       show_tag: item.show_tag !== false,
+      show_new_tag: item.show_new_tag !== undefined ? Boolean(item.show_new_tag) : true,
       click_count: item.click_count || 0
     }));
   } catch (err) {
@@ -92,6 +93,7 @@ export async function upsertProduct(product) {
     is_published: product.is_published !== undefined ? product.is_published : true,
     featured: product.featured || false,
     show_tag: product.show_tag !== undefined ? product.show_tag : true,
+    show_new_tag: product.show_new_tag !== undefined ? Boolean(product.show_new_tag) : true,
     date_added: product.dateAdded || new Date().toISOString().slice(0, 10),
     updated_at: new Date().toISOString()
   };
@@ -101,13 +103,32 @@ export async function upsertProduct(product) {
     .upsert(payload, { onConflict: 'id' })
     .select();
 
-  // If show_tag column does not exist yet in database, safely retry without it
-  if (error && (error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('show_tag'))) {
-    delete payload.show_tag;
-    const retry = await supabase
+  // If show_tag or show_new_tag column does not exist yet in database, safely retry without it
+  if (error && (error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('show_'))) {
+    if (error.message?.includes('show_new_tag')) {
+      delete payload.show_new_tag;
+    } else if (error.message?.includes('show_tag')) {
+      delete payload.show_tag;
+    } else {
+      delete payload.show_new_tag;
+      delete payload.show_tag;
+    }
+
+    let retry = await supabase
       .from('products')
       .upsert(payload, { onConflict: 'id' })
       .select();
+
+    // If retry still encounters column issues, drop both and retry once more
+    if (retry.error && (retry.error.code === '42703' || retry.error.code === 'PGRST204' || retry.error.message?.includes('show_'))) {
+      delete payload.show_new_tag;
+      delete payload.show_tag;
+      retry = await supabase
+        .from('products')
+        .upsert(payload, { onConflict: 'id' })
+        .select();
+    }
+
     if (retry.error) throw retry.error;
     data = retry.data;
   } else if (error) {
