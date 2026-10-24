@@ -21,7 +21,7 @@ export default function Footer() {
             />
             <div>
               <span className="font-display font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                Doraemon <span className="text-sky-600 dark:text-sky-400">Gadget Store</span>
+                Doraemon <span className="text-slate-500 dark:text-zinc-400 font-medium">Gadget Store</span>
               </span>
               <p className="text-[11px] text-slate-400">
                 Curated viral gadgets featured on Instagram Reels

@@ -185,7 +185,7 @@ export default function ProductDetailPage({
               </>
             ) : (
               <>
-                <Share2 className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                <Share2 className="w-4 h-4 text-slate-700 dark:text-zinc-300" />
                 <span>Share</span>
               </>
             )}
@@ -273,7 +273,7 @@ export default function ProductDetailPage({
                       onClick={() => setActiveImageIndex(idx)}
                       className={`relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all cursor-pointer ${
                         activeImageIndex === idx
-                          ? 'border-sky-500 ring-2 ring-sky-500/20'
+                          ? 'border-slate-900 dark:border-white ring-2 ring-slate-900/20 dark:ring-white/20'
                           : 'border-slate-200/80 dark:border-white/10 opacity-70 hover:opacity-100'
                       }`}
                       aria-label={`View photo ${idx + 1}`}
@@ -311,7 +311,7 @@ export default function ProductDetailPage({
               <div className="space-y-3 pt-1">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xs sm:text-sm uppercase tracking-wider text-slate-900 dark:text-white font-bold flex items-center gap-2">
-                    <ShoppingBag className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                    <ShoppingBag className="w-4 h-4 text-slate-700 dark:text-zinc-300" />
                     <span>Where to Buy (Direct Links)</span>
                   </h2>
                   <span className="text-xs text-slate-400 font-medium">
@@ -371,7 +371,7 @@ export default function ProductDetailPage({
             {/* Header */}
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div>
-                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-1">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-zinc-300 mb-1">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Similar Recommendations</span>
                 </div>
@@ -514,7 +514,7 @@ export default function ProductDetailPage({
                       onClick={() => setActiveImageIndex(idx)}
                       className={`relative w-9 h-9 sm:w-12 sm:h-12 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all cursor-pointer ${
                         activeImageIndex === idx
-                          ? 'border-sky-400 scale-105'
+                          ? 'border-white scale-105'
                           : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
                       aria-label={`Jump to photo ${idx + 1}`}

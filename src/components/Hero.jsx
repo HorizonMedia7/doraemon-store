@@ -26,7 +26,7 @@ export default function Hero() {
 
           {/* Minimal Headline */}
           <h1 className="font-display font-extrabold text-2xl sm:text-4xl tracking-tight text-slate-900 dark:text-white leading-tight">
-            Doraemon <span className="text-sky-600 dark:text-sky-400">Gadget Store</span>
+            Doraemon <span className="text-slate-500 dark:text-zinc-400 font-medium">Gadget Store</span>
           </h1>
 
           {/* Clean Subtitle */}
@@ -36,7 +36,7 @@ export default function Hero() {
               href="https://www.instagram.com/doraemon_gadgets7"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-900 dark:text-white font-semibold underline decoration-slate-300 dark:decoration-slate-700 hover:text-sky-600"
+              className="text-slate-900 dark:text-white font-semibold underline decoration-slate-300 dark:decoration-slate-700 hover:text-slate-700 dark:hover:text-zinc-200"
             >
               @doraemon_gadgets7
             </a>

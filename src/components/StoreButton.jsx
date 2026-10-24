@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, ShoppingBag } from 'lucide-react';
 import { useAffiliateTracker } from '../hooks/useAffiliateTracker';
+import { formatPrice } from '../utils/productHelpers';
 
 // Authentic brand configurations with official brand logos, colors, and badges
 const STORE_CONFIGS = {
@@ -120,7 +121,7 @@ export default function StoreButton({ link, productName, productId }) {
     accentColor: '#38bdf8',
     badgeClass: 'bg-white/20 text-white font-bold',
     icon: (
-      <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center p-1 shadow-xs text-sky-400 flex-shrink-0">
+      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center p-1 shadow-xs text-zinc-300 flex-shrink-0">
         <ShoppingBag className="w-4 h-4" />
       </div>
     )
@@ -132,9 +133,11 @@ export default function StoreButton({ link, productName, productId }) {
       productName,
       productId,
       url: link.url,
-      price: link.price
+      price: formatPrice(link.price)
     });
   };
+
+  const formattedPrice = formatPrice(link.price);
 
   return (
     <motion.a
@@ -145,7 +148,7 @@ export default function StoreButton({ link, productName, productId }) {
       whileHover={{ scale: 1.015, y: -1 }}
       whileTap={{ scale: 0.98 }}
       className={`group relative flex items-center justify-between gap-3 px-3.5 py-3 rounded-xl border shadow-sm transition-all duration-150 min-h-[50px] ${config.bgClass}`}
-      aria-label={`Buy ${productName} on ${config.name}${link.price ? ` for ${link.price}` : ''}`}
+      aria-label={`Buy ${productName} on ${config.name}${formattedPrice ? ` for ${formattedPrice}` : ''}`}
     >
       <div className="flex items-center gap-2.5 min-w-0">
         {config.icon}
@@ -161,9 +164,9 @@ export default function StoreButton({ link, productName, productId }) {
 
       {/* Price tag & Buy CTA */}
       <div className="flex items-center gap-2 flex-shrink-0">
-        {link.price && (
+        {formattedPrice && (
           <span className="px-2.5 py-1 text-xs sm:text-sm font-extrabold rounded-lg bg-black/30 text-white border border-white/20 shadow-xs">
-            {link.price}
+            {formattedPrice}
           </span>
         )}
         <span className={`px-3 py-1.5 text-xs rounded-lg shadow-xs flex items-center gap-1 transition-colors ${config.badgeClass}`}>

@@ -65,11 +65,12 @@ export async function getProducts(includeDrafts = false) {
       dateAdded: item.date_added || item.created_at?.slice(0, 10) || new Date().toISOString().slice(0, 10),
       is_published: item.is_published ?? true,
       featured: item.featured ?? false,
+      show_tag: item.show_tag !== false,
       click_count: item.click_count || 0
     }));
   } catch (err) {
     console.error('Error fetching products:', err);
-    return localProducts;
+    return [];
   }
 }
 
@@ -90,16 +91,29 @@ export async function upsertProduct(product) {
     links: product.links || [],
     is_published: product.is_published !== undefined ? product.is_published : true,
     featured: product.featured || false,
+    show_tag: product.show_tag !== undefined ? product.show_tag : true,
     date_added: product.dateAdded || new Date().toISOString().slice(0, 10),
     updated_at: new Date().toISOString()
   };
 
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('products')
     .upsert(payload, { onConflict: 'id' })
     .select();
 
-  if (error) throw error;
+  // If show_tag column does not exist yet in database (code 42703), safely retry without it
+  if (error && error.code === '42703') {
+    delete payload.show_tag;
+    const retry = await supabase
+      .from('products')
+      .upsert(payload, { onConflict: 'id' })
+      .select();
+    if (retry.error) throw retry.error;
+    data = retry.data;
+  } else if (error) {
+    throw error;
+  }
+
   return data?.[0];
 }
 

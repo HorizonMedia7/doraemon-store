@@ -36,7 +36,7 @@ export default function Navbar({ onHome }) {
           />
           
           <span className="font-display font-bold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white">
-            Doraemon <span className="text-sky-600 dark:text-sky-400">Gadget Store</span>
+            Doraemon <span className="text-slate-500 dark:text-zinc-400 font-medium">Gadget Store</span>
           </span>
         </a>
 

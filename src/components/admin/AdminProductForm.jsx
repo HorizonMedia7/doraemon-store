@@ -14,7 +14,8 @@ import {
   AlertCircle,
   Sparkles,
   Link as LinkIcon,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Tag
 } from 'lucide-react';
 import { upsertProduct, uploadImage } from '../../services/supabase';
 import { compressImage, formatBytes } from '../../utils/imageCompressor';
@@ -40,6 +41,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
   const [customCategory, setCustomCategory] = useState('');
   const [isPublished, setIsPublished] = useState(product?.is_published ?? true);
   const [featured, setFeatured] = useState(product?.featured ?? false);
+  const [showTag, setShowTag] = useState(product?.show_tag ?? true);
 
   // Highlights / bullet points
   const [highlights, setHighlights] = useState(
@@ -214,6 +216,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
       links: validLinks,
       is_published: isPublished,
       featured,
+      show_tag: showTag,
       dateAdded: product?.dateAdded || new Date().toISOString().slice(0, 10)
     };
 
@@ -645,7 +648,7 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
                     type="text"
                     value={link.price || ''}
                     onChange={(e) => handleLinkChange(idx, 'price', e.target.value)}
-                    placeholder="e.g. ₹470 or ₹1,299"
+                    placeholder="e.g. 470 or 1,299 (₹ added automatically)"
                     className="w-full sm:w-1/2 px-3 py-1.5 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg text-slate-900 dark:text-white"
                   />
                 </div>
@@ -718,6 +721,37 @@ export default function AdminProductForm({ product, onSave, onCancel }) {
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
                     featured ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Category Tag Visibility Toggle */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${showTag ? 'bg-indigo-500/20 text-indigo-500' : 'bg-slate-200 text-slate-500'}`}>
+                  <Tag className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                    Show Category Tag on Card
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    {showTag ? `Category tag "${category}" is displayed above the photo on storefront.` : 'Category tag is hidden from the storefront card.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowTag(!showTag)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  showTag ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    showTag ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>
