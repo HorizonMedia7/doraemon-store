@@ -44,13 +44,12 @@ export async function getProducts(includeDrafts = false) {
     const { data, error } = await query;
 
     if (error) {
-      console.warn('Supabase fetch failed, falling back to local products:', error.message);
-      return localProducts;
+      console.warn('Supabase fetch failed:', error.message);
+      return [];
     }
 
-    if (!data || data.length === 0) {
-      // If table is completely empty, use local products
-      return localProducts;
+    if (!data) {
+      return [];
     }
 
     // Map database fields to application shape

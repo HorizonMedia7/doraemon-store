@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Frown, RefreshCw } from 'lucide-react';
-import initialProductsData from './data/products';
 import Navbar from './components/Navbar';
 import FilterBar from './components/FilterBar';
 import ProductCard from './components/ProductCard';
@@ -10,10 +9,38 @@ import Footer from './components/Footer';
 import AdminPage from './components/admin/AdminPage';
 import { getAllCategories } from './utils/productHelpers';
 import { useProductRouting } from './hooks/useProductRouting';
-import { getProducts } from './services/supabase';
+import { getProducts, isSupabaseConfigured } from './services/supabase';
+import initialProductsData from './data/products';
 
 export default function App() {
-  const [products, setProducts] = useState(initialProductsData);
+  // Initialize with cached products so there is ZERO flash of old products on refresh!
+  const [products, setProducts] = useState(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const cached = localStorage.getItem('dg_cached_products');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch {
+      // Ignore cache parse error
+    }
+    // If Supabase is configured, start empty to avoid showing old hardcoded products
+    return isSupabaseConfigured ? [] : initialProductsData;
+  });
+
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    try {
+      const cached = localStorage.getItem('dg_cached_products');
+      return !cached;
+    } catch {
+      return true;
+    }
+  });
+
   const [isAdmin, setIsAdmin] = useState(() => {
     if (typeof window === 'undefined') return false;
     const path = window.location.pathname;
@@ -32,15 +59,20 @@ export default function App() {
     }
   });
 
-  // Fetch live products from Supabase (or fallback to local)
+  // Fetch live products from Supabase and cache them
   const refreshProducts = useCallback(async () => {
     try {
       const data = await getProducts(false); // false = published only
-      if (data && data.length > 0) {
+      if (data) {
         setProducts(data);
+        try {
+          localStorage.setItem('dg_cached_products', JSON.stringify(data));
+        } catch {}
       }
     } catch (err) {
-      console.warn('Using initial product data fallback:', err);
+      console.warn('Failed to load products from database:', err);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -128,7 +160,6 @@ export default function App() {
 
     // Sort products
     result.sort((a, b) => {
-      // Prioritize featured items
       if (a.featured && !b.featured) return -1;
       if (!a.featured && b.featured) return 1;
 
@@ -154,7 +185,6 @@ export default function App() {
     if (viewMode === 'detailed') {
       return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5';
     }
-    // Default 'grid': 2 columns on mobile (efficient, no scroll overload!), 3 on desktop
     return 'grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-5';
   }, [viewMode]);
 
@@ -194,7 +224,22 @@ export default function App() {
               onViewChange={handleViewChange}
             />
 
-            {filteredProducts.length > 0 ? (
+            {isLoading && products.length === 0 ? (
+              /* Shimmer Loading Skeleton while loading live products */
+              <div className={gridContainerClass}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl bg-slate-50 dark:bg-[#11131a] border border-slate-200/60 dark:border-white/5 p-2.5 sm:p-3.5 space-y-3 animate-pulse"
+                  >
+                    <div className="w-full aspect-square sm:aspect-[4/3] rounded-xl bg-slate-200 dark:bg-slate-800" />
+                    <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-md w-3/4" />
+                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded-md w-1/2" />
+                    <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-xl w-full mt-2" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredProducts.length > 0 ? (
               <motion.div
                 layout
                 className={gridContainerClass}

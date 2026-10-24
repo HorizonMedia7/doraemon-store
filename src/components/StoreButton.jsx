@@ -3,28 +3,40 @@ import { motion } from 'framer-motion';
 import { ExternalLink, ShoppingBag } from 'lucide-react';
 import { useAffiliateTracker } from '../hooks/useAffiliateTracker';
 
-// Authentic brand configurations with official brand logos, colors, and styling
+// Authentic brand configurations with official brand logos, colors, and badges
 const STORE_CONFIGS = {
   amazon: {
     name: 'Amazon',
-    bgClass: 'bg-[#131921] hover:bg-[#1f2833] text-white border-amber-500/40 hover:border-amber-400',
+    bgClass: 'bg-[#131921] hover:bg-[#1a222d] text-white border-amber-500/40 hover:border-amber-400',
     accentColor: '#FF9900',
     badgeClass: 'bg-amber-400 text-slate-950 font-bold hover:bg-amber-300',
     icon: (
-      <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M13.92 14.54c-2.45 1.83-6.03 2.8-9.13 2.8-4.32 0-8.21-1.63-11.14-4.38-.23-.22-.03-.52.24-.35 3.16 1.84 7.03 2.94 11.02 2.94 2.75 0 5.85-.75 8.65-2.28.42-.23.77.26.36.52v.75zm1.5-2.07c-.31-.41-.75-1.54-.75-2.2 0-1.42.84-2.26 2.06-2.26 1.25 0 1.95.84 1.95 2.26 0 1.48-.96 2.27-2.11 2.27-.42 0-.85-.04-1.15-.07zm-1.84 3.51c.36.46 1.34 1.05 2.37 1.05 1.57 0 2.87-.97 2.87-3.08v-4.9h-1.63v.83c-.49-.6-1.32-.98-2.23-.98-2.12 0-3.69 1.76-3.69 3.93 0 2.29 1.44 4.09 3.53 4.09.84 0 1.62-.35 2.08-.88v.67c0 1.13-.67 1.72-1.72 1.72-.94 0-1.52-.45-1.75-.92-.09-.2-.29-.31-.5-.27l-1.34.33c-.2.05-.33.24-.28.46z" fill="#FF9900"/>
-      </svg>
+      <div className="w-8 h-8 rounded-lg bg-[#131921] flex items-center justify-center p-1 shadow-xs border border-amber-500/30 flex-shrink-0">
+        <svg viewBox="0 0 48 30" className="w-6 h-4" fill="none">
+          <path
+            d="M16 18c-1.5 0-2.8-.7-3.3-1.8l1.6-1.1c.3.6 1 1 1.7 1 .8 0 1.4-.4 1.4-1.1v-.3c-.5.4-1.2.6-2 .6-2.1 0-3.5-1.4-3.5-3.3 0-2.1 1.6-3.4 3.7-3.4 1 0 1.8.4 2.2.9V8.8h1.9v7.1c0 1.9-1.4 3-3.7 3zm-.2-3.4c1 0 1.8-.7 1.8-1.8 0-1-.8-1.8-1.8-1.8-1 0-1.8.7-1.8 1.8 0 1 .8 1.8 1.8 1.8z"
+            fill="#FFFFFF"
+          />
+          <path d="M6 21c7 4.5 18 4.5 25 0" stroke="#FF9900" strokeWidth="2.4" strokeLinecap="round" fill="none"/>
+          <path d="M30 18.5l2.5 2.5-3.5 1" fill="#FF9900"/>
+        </svg>
+      </div>
     )
   },
   flipkart: {
     name: 'Flipkart',
-    bgClass: 'bg-[#2874F0] hover:bg-[#1a65dc] text-white border-blue-300/40 hover:border-yellow-300',
+    bgClass: 'bg-[#2874F0] hover:bg-[#1f63d6] text-white border-yellow-400/50 hover:border-yellow-300',
     accentColor: '#FFE500',
     badgeClass: 'bg-yellow-400 text-blue-950 font-bold hover:bg-yellow-300',
     icon: (
-      <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M17 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-7 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM7.1 5h14.4l-2.1 7.2a2 2 0 0 1-1.9 1.5H8.7l-.4 1.8h11.2v2H7.9a2 2 0 0 1-2-2.3L7.1 5zM5.5 3H2v2h2.4l1.1 5.3-1 2C4.1 13 4 13.5 4 14a3 3 0 0 0 3 3h14v-2H7a1 1 0 0 1-1-1v-.2l.9-1.8h9.8a3 3 0 0 0 2.9-2.2l2.3-7.8A1 1 0 0 0 21 1H5.5v2z" fill="#FFE500" />
-      </svg>
+      <div className="w-8 h-8 rounded-lg bg-[#2874F0] flex items-center justify-center p-1 shadow-xs border border-yellow-400/40 flex-shrink-0">
+        <svg viewBox="0 0 36 36" className="w-6 h-6" fill="none">
+          <path d="M11 13h14l-1.8 15H12.8L11 13z" fill="#FFE11B"/>
+          <path d="M15 13V10.5a3 3 0 0 1 6 0V13" stroke="#2874F0" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+          <path d="M17 18h3.5m-3.5 3h2.5m-2.5-3.5v7" stroke="#2874F0" strokeWidth="2.2" strokeLinecap="round"/>
+          <path d="M5.5 16h3m-4 3.5h3.5m-2.5 3.5h2" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round"/>
+        </svg>
+      </div>
     )
   },
   meesho: {
@@ -33,9 +45,11 @@ const STORE_CONFIGS = {
     accentColor: '#ff66b2',
     badgeClass: 'bg-pink-400 text-slate-950 font-bold hover:bg-pink-300',
     icon: (
-      <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 6h-3.18C15.4 4.84 14.3 4 13 4c-1.3 0-2.4.84-2.82 2H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-0.5c.55 0 1 .45 1 1h-2c0-.55.45-1 1-1zm-1 9.5l-2.5-3 1.4-1.4 1.1 1.3 3.1-3.4 1.4 1.4L12 15z" fill="#ffffff" />
-      </svg>
+      <div className="w-8 h-8 rounded-lg bg-[#F43397] flex items-center justify-center p-1 shadow-xs border border-white/20 flex-shrink-0">
+        <svg viewBox="0 0 32 32" className="w-6 h-6" fill="none">
+          <path d="M8 22V13.5c0-1.7 1.3-3 3-3s3 1.3 3 3V22m0-8.5c0-1.7 1.3-3 3-3s3 1.3 3 3V22" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
     )
   },
   myntra: {
@@ -44,9 +58,14 @@ const STORE_CONFIGS = {
     accentColor: '#ffffff',
     badgeClass: 'bg-white text-slate-900 font-bold hover:bg-slate-100',
     icon: (
-      <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2L2 22h5l5-10 5 10h5L12 2z" fill="#ffffff" />
-      </svg>
+      <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center p-1 shadow-xs border border-white/30 flex-shrink-0">
+        <svg viewBox="0 0 36 28" className="w-6 h-5" fill="none">
+          <path d="M3 24L11 4C11.8 2.4 14.2 2.4 15 4L20 14L15 24H3Z" fill="#F13AB1" />
+          <path d="M12 24L18 12L24 24H12Z" fill="#F26A10" />
+          <path d="M33 24L25 4C24.2 2.4 21.8 2.4 21 4L16 14L21 24H33Z" fill="#FFC107" />
+          <path d="M18 12L13 22H7L15 6C15.8 4.4 18.2 4.4 19 6L23 14L18 12Z" fill="#FF3F6C" />
+        </svg>
+      </div>
     )
   },
   'tata cliq': {
@@ -55,18 +74,23 @@ const STORE_CONFIGS = {
     accentColor: '#ffffff',
     badgeClass: 'bg-white text-slate-900 font-bold hover:bg-slate-100',
     icon: (
-      <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="#ffffff" />
-      </svg>
+      <div className="w-8 h-8 rounded-lg bg-[#bd081c] flex items-center justify-center p-1 shadow-xs border border-white/30 flex-shrink-0">
+        <svg viewBox="0 0 32 32" className="w-6 h-6" fill="none">
+          <circle cx="15" cy="14" r="7" stroke="#FFFFFF" strokeWidth="2.6" fill="none" />
+          <path d="M20 19l4.5 4.5" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" />
+        </svg>
+      </div>
     )
   },
   ajio: {
     name: 'Ajio',
-    bgClass: 'bg-[#2c4152] hover:bg-[#233544] text-white border-cyan-400/40',
+    bgClass: 'bg-[#1e293b] hover:bg-[#15202e] text-white border-cyan-400/40',
     accentColor: '#38bdf8',
     badgeClass: 'bg-cyan-400 text-slate-950 font-bold hover:bg-cyan-300',
     icon: (
-      <ShoppingBag className="w-5 h-5 flex-shrink-0 text-cyan-300" />
+      <div className="w-8 h-8 rounded-lg bg-[#0f172a] flex items-center justify-center p-1 shadow-xs border border-cyan-400/30 flex-shrink-0">
+        <span className="font-black text-white text-[10px] tracking-wider font-mono">AJIO</span>
+      </div>
     )
   },
   croma: {
@@ -75,7 +99,9 @@ const STORE_CONFIGS = {
     accentColor: '#00E9BF',
     badgeClass: 'bg-emerald-400 text-slate-950 font-bold hover:bg-emerald-300',
     icon: (
-      <ShoppingBag className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+      <div className="w-8 h-8 rounded-lg bg-[#18181b] flex items-center justify-center p-1 shadow-xs border border-emerald-400/30 flex-shrink-0">
+        <span className="font-black text-white text-[10px] tracking-tight">cr<span className="text-[#00E9BF]">o</span>ma</span>
+      </div>
     )
   }
 };
@@ -93,7 +119,11 @@ export default function StoreButton({ link, productName, productId }) {
     bgClass: 'bg-slate-900 hover:bg-slate-800 text-white border-slate-700',
     accentColor: '#38bdf8',
     badgeClass: 'bg-white/20 text-white font-bold',
-    icon: <ShoppingBag className="w-5 h-5 flex-shrink-0 text-sky-400" />
+    icon: (
+      <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center p-1 shadow-xs text-sky-400 flex-shrink-0">
+        <ShoppingBag className="w-4 h-4" />
+      </div>
+    )
   };
 
   const handleClick = () => {
@@ -114,13 +144,11 @@ export default function StoreButton({ link, productName, productId }) {
       onClick={handleClick}
       whileHover={{ scale: 1.015, y: -1 }}
       whileTap={{ scale: 0.98 }}
-      className={`group relative flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border shadow-sm transition-all duration-150 min-h-[50px] ${config.bgClass}`}
+      className={`group relative flex items-center justify-between gap-3 px-3.5 py-3 rounded-xl border shadow-sm transition-all duration-150 min-h-[50px] ${config.bgClass}`}
       aria-label={`Buy ${productName} on ${config.name}${link.price ? ` for ${link.price}` : ''}`}
     >
-      <div className="flex items-center gap-3 min-w-0">
-        <div className="p-1.5 rounded-lg bg-black/25 flex-shrink-0 group-hover:scale-105 transition-transform">
-          {config.icon}
-        </div>
+      <div className="flex items-center gap-2.5 min-w-0">
+        {config.icon}
         <div className="flex flex-col text-left">
           <span className="text-[10px] uppercase tracking-wider text-white/70 font-semibold leading-tight">
             Available on
