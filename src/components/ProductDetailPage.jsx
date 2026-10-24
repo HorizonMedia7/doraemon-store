@@ -16,6 +16,7 @@ import {
 import StoreButton from './StoreButton';
 import ProductCard from './ProductCard';
 import { isProductNew } from '../utils/productHelpers';
+import { detectImageTone } from '../utils/imageColorHelper';
 
 export default function ProductDetailPage({
   product,
@@ -25,6 +26,7 @@ export default function ProductDetailPage({
   onBack
 }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [imageTone, setImageTone] = useState('white');
   const [copiedShare, setCopiedShare] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
@@ -41,10 +43,48 @@ export default function ProductDetailPage({
     setActiveImageIndex(0);
   }, [product?.id]);
 
+  const images = product?.images && product.images.length > 0 ? product.images : ['/products/placeholder.jpg'];
+
+  // Dynamically detect whether image's dominant tone is white, black, or grey
+  useEffect(() => {
+    let isMounted = true;
+    const currentImg = images[activeImageIndex];
+    if (currentImg) {
+      detectImageTone(currentImg).then((tone) => {
+        if (isMounted) setImageTone(tone);
+      });
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [images, activeImageIndex]);
+
   if (!product) return null;
 
-  const images = product.images && product.images.length > 0 ? product.images : ['/products/placeholder.jpg'];
   const isNew = product.show_new_tag !== undefined ? Boolean(product.show_new_tag) : isProductNew(product.dateAdded);
+
+  // Tone styling: strictly white, black, or grey based on the image
+  const toneStyles = {
+    white: {
+      container: 'bg-white border-slate-200/90 dark:border-white/15',
+      pill: 'bg-black/60 text-white hover:bg-black/80',
+      arrow: 'bg-black/40 hover:bg-black/70 text-white',
+      counter: 'bg-black/60 text-white'
+    },
+    black: {
+      container: 'bg-[#09090b] border-slate-800 dark:border-white/15',
+      pill: 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-xs',
+      arrow: 'bg-white/20 hover:bg-white/35 text-white backdrop-blur-xs',
+      counter: 'bg-white/20 text-white backdrop-blur-xs'
+    },
+    grey: {
+      container: 'bg-slate-100 dark:bg-[#181a20] border-slate-200/80 dark:border-white/10',
+      pill: 'bg-black/50 text-white hover:bg-black/70',
+      arrow: 'bg-black/35 hover:bg-black/65 text-white',
+      counter: 'bg-black/50 text-white'
+    }
+  };
+  const activeToneStyle = toneStyles[imageTone] || toneStyles.white;
 
   // Compute up to 4 similar recommendations (prioritizing same category)
   const recommendations = useMemo(() => {
@@ -207,18 +247,10 @@ export default function ProductDetailPage({
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
-                className="group relative aspect-[4/3] sm:aspect-square w-full rounded-2xl overflow-hidden bg-slate-100/90 dark:bg-zinc-950 border border-slate-200/80 dark:border-white/10 select-none shadow-xs cursor-zoom-in touch-pan-y flex items-center justify-center"
+                className={`group relative aspect-[4/3] sm:aspect-square w-full rounded-2xl overflow-hidden select-none shadow-xs cursor-zoom-in touch-pan-y flex items-center justify-center border transition-colors duration-300 ${activeToneStyle.container}`}
                 title="Click to view full image"
               >
-                {/* Ambient soft blurred background matching the photo tones so odd aspect ratios blend cleanly without harsh letterbox gaps */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center scale-115 blur-2xl opacity-25 dark:opacity-30 pointer-events-none transition-all duration-300"
-                  style={{ backgroundImage: `url(${images[activeImageIndex]})` }}
-                  aria-hidden="true"
-                />
-                <div className="absolute inset-0 bg-white/40 dark:bg-black/35 pointer-events-none backdrop-blur-[2px]" aria-hidden="true" />
-
-                {/* Foreground image: fully contained, zero cropping, beautiful natural look */}
+                {/* Foreground image: fully contained, zero cropping, adapts cleanly to white/black/grey container */}
                 <motion.img
                   key={activeImageIndex}
                   src={images[activeImageIndex]}
@@ -226,11 +258,11 @@ export default function ProductDetailPage({
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
-                  className="relative z-10 w-full h-full object-contain p-2 sm:p-4 drop-shadow-xs group-hover:scale-[1.02] transition-transform duration-300 pointer-events-none"
+                  className="w-full h-full object-contain p-2 sm:p-4 group-hover:scale-[1.02] transition-transform duration-300 pointer-events-none"
                 />
 
                 {/* Minimal Expand Icon/Pill - unobtrusive on mobile */}
-                <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 p-1.5 sm:px-2.5 sm:py-1 rounded-full sm:rounded-lg text-[10px] sm:text-[11px] font-semibold bg-black/40 sm:bg-black/50 text-white/90 backdrop-blur-xs flex items-center gap-1.5 shadow-xs pointer-events-none group-hover:bg-black/70 transition-colors">
+                <div className={`absolute top-2 right-2 sm:top-3 sm:right-3 z-20 p-1.5 sm:px-2.5 sm:py-1 rounded-full sm:rounded-lg text-[10px] sm:text-[11px] font-semibold backdrop-blur-xs flex items-center gap-1.5 shadow-xs pointer-events-none transition-colors ${activeToneStyle.pill}`}>
                   <Maximize2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   <span className="hidden sm:inline">Click to expand</span>
                 </div>
@@ -244,7 +276,7 @@ export default function ProductDetailPage({
                           e.stopPropagation();
                           prevImage();
                         }}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black/35 hover:bg-black/60 text-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center focus:outline-none transition-transform active:scale-90 cursor-pointer"
+                        className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 rounded-full shadow-xs flex items-center justify-center focus:outline-none transition-all active:scale-90 cursor-pointer ${activeToneStyle.arrow}`}
                         aria-label="Previous photo"
                       >
                         <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -256,7 +288,7 @@ export default function ProductDetailPage({
                           e.stopPropagation();
                           nextImage();
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black/35 hover:bg-black/60 text-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center focus:outline-none transition-transform active:scale-90 cursor-pointer"
+                        className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 rounded-full shadow-xs flex items-center justify-center focus:outline-none transition-all active:scale-90 cursor-pointer ${activeToneStyle.arrow}`}
                         aria-label="Next photo"
                       >
                         <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -267,7 +299,7 @@ export default function ProductDetailPage({
 
                 {/* Subtle Counter Badge (Minimal size on mobile) */}
                 {images.length > 1 && (
-                  <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-black/40 sm:bg-black/60 text-white/90 backdrop-blur-xs whitespace-nowrap tracking-wide">
+                  <div className={`absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold backdrop-blur-xs whitespace-nowrap tracking-wide transition-colors ${activeToneStyle.counter}`}>
                     {activeImageIndex + 1} / {images.length}
                   </div>
                 )}
