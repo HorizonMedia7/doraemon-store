@@ -1,16 +1,26 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Frown, RefreshCw } from 'lucide-react';
-import productsData from './data/products';
+import initialProductsData from './data/products';
 import Navbar from './components/Navbar';
 import FilterBar from './components/FilterBar';
 import ProductCard from './components/ProductCard';
 import ProductDetailPage from './components/ProductDetailPage';
 import Footer from './components/Footer';
+import AdminPage from './components/admin/AdminPage';
 import { getAllCategories } from './utils/productHelpers';
 import { useProductRouting } from './hooks/useProductRouting';
+import { getProducts } from './services/supabase';
 
 export default function App() {
+  const [products, setProducts] = useState(initialProductsData);
+  const [isAdmin, setIsAdmin] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+    return path === '/admin' || path === '/admin/' || hash === '#admin' || hash === '#/admin';
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
@@ -22,6 +32,42 @@ export default function App() {
     }
   });
 
+  // Fetch live products from Supabase (or fallback to local)
+  const refreshProducts = useCallback(async () => {
+    try {
+      const data = await getProducts(false); // false = published only
+      if (data && data.length > 0) {
+        setProducts(data);
+      }
+    } catch (err) {
+      console.warn('Using initial product data fallback:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshProducts();
+  }, [refreshProducts]);
+
+  // Listen to browser history navigation (popstate) for /admin and /product/:id
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      const onAdmin = path === '/admin' || path === '/admin/' || hash === '#admin' || hash === '#/admin';
+      setIsAdmin(onAdmin);
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
+  const handleBackToStore = useCallback(() => {
+    window.history.pushState(null, '', '/');
+    setIsAdmin(false);
+    refreshProducts();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [refreshProducts]);
+
   const handleViewChange = (mode) => {
     setViewMode(mode);
     try {
@@ -32,7 +78,7 @@ export default function App() {
   };
 
   // Deep-linking URL routing for full page product view
-  const { selectedProduct, openProduct, closeProduct } = useProductRouting(productsData);
+  const { selectedProduct, openProduct, closeProduct } = useProductRouting(products);
 
   // Navigate from recommendations to filtered category on main catalog
   const handleViewCategory = (category) => {
@@ -53,12 +99,12 @@ export default function App() {
 
   // Auto-generate categories from products data
   const categories = useMemo(() => {
-    return getAllCategories(productsData);
-  }, []);
+    return getAllCategories(products);
+  }, [products]);
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
-    let result = [...productsData];
+    let result = [...products];
 
     // Filter by category
     if (activeCategory !== 'All') {
@@ -82,19 +128,23 @@ export default function App() {
 
     // Sort products
     result.sort((a, b) => {
+      // Prioritize featured items
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+
       if (sortBy === 'newest') {
         const dateA = new Date(a.dateAdded || '2000-01-01').getTime();
         const dateB = new Date(b.dateAdded || '2000-01-01').getTime();
         return dateB - dateA;
       }
       if (sortBy === 'name') {
-        return a.name.localeCompare(b.name);
+        return (a.name || '').localeCompare(b.name || '');
       }
       return 0;
     });
 
     return result;
-  }, [activeCategory, searchQuery, sortBy]);
+  }, [products, activeCategory, searchQuery, sortBy]);
 
   // Compute container class based on active view mode
   const gridContainerClass = useMemo(() => {
@@ -108,6 +158,11 @@ export default function App() {
     return 'grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-5';
   }, [viewMode]);
 
+  // Render Admin Page if on /admin route
+  if (isAdmin) {
+    return <AdminPage onBackToStore={handleBackToStore} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-[#090a0f] text-slate-800 dark:text-slate-100 transition-colors duration-200">
       {/* Minimal Sticky Navbar */}
@@ -117,7 +172,7 @@ export default function App() {
         /* Full Page Dedicated Product View with Similar Recommendations */
         <ProductDetailPage
           product={selectedProduct}
-          allProducts={productsData}
+          allProducts={products}
           onSelectProduct={openProduct}
           onViewCategory={handleViewCategory}
           onBack={closeProduct}

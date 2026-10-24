@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
+import { recordAffiliateClick } from '../services/supabase';
 
 /**
  * Lightweight hook to track outbound affiliate link clicks.
- * Logs structured analytics events to console and dispatches a DOM CustomEvent
- * so Google Analytics 4, Meta Pixel, or PostHog can be integrated easily.
+ * Logs structured analytics events to console, updates Supabase database stats,
+ * and dispatches a DOM CustomEvent for external analytics.
  */
 export function useAffiliateTracker() {
   const trackClick = useCallback(({ store, productName, productId, url, price }) => {
@@ -35,11 +36,19 @@ export function useAffiliateTracker() {
         })
       );
 
-      // Example of optional dataLayer push if Google Tag Manager exists
       if (window.dataLayer && Array.isArray(window.dataLayer)) {
         window.dataLayer.push(eventPayload);
       }
     }
+
+    // 3. Record click in Supabase (fire and forget, won't slow down click)
+    recordAffiliateClick({
+      productId,
+      productName,
+      store,
+      url,
+      price
+    });
   }, []);
 
   return { trackClick };
