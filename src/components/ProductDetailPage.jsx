@@ -207,21 +207,30 @@ export default function ProductDetailPage({
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
-                className="group relative aspect-[4/3] sm:aspect-square w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-white/10 select-none shadow-xs cursor-zoom-in touch-pan-y"
+                className="group relative aspect-[4/3] sm:aspect-square w-full rounded-2xl overflow-hidden bg-slate-100/90 dark:bg-zinc-950 border border-slate-200/80 dark:border-white/10 select-none shadow-xs cursor-zoom-in touch-pan-y flex items-center justify-center"
                 title="Click to view full image"
               >
+                {/* Ambient soft blurred background matching the photo tones so odd aspect ratios blend cleanly without harsh letterbox gaps */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center scale-115 blur-2xl opacity-25 dark:opacity-30 pointer-events-none transition-all duration-300"
+                  style={{ backgroundImage: `url(${images[activeImageIndex]})` }}
+                  aria-hidden="true"
+                />
+                <div className="absolute inset-0 bg-white/40 dark:bg-black/35 pointer-events-none backdrop-blur-[2px]" aria-hidden="true" />
+
+                {/* Foreground image: fully contained, zero cropping, beautiful natural look */}
                 <motion.img
                   key={activeImageIndex}
                   src={images[activeImageIndex]}
                   alt={`${product.name} photo ${activeImageIndex + 1}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 pointer-events-none"
+                  className="relative z-10 w-full h-full object-contain p-2 sm:p-4 drop-shadow-xs group-hover:scale-[1.02] transition-transform duration-300 pointer-events-none"
                 />
 
                 {/* Minimal Expand Icon/Pill - unobtrusive on mobile */}
-                <div className="absolute top-2 right-2 sm:top-3 sm:right-3 p-1.5 sm:px-2.5 sm:py-1 rounded-full sm:rounded-lg text-[10px] sm:text-[11px] font-semibold bg-black/40 sm:bg-black/50 text-white/90 backdrop-blur-xs flex items-center gap-1.5 shadow-xs pointer-events-none group-hover:bg-black/70 transition-colors">
+                <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 p-1.5 sm:px-2.5 sm:py-1 rounded-full sm:rounded-lg text-[10px] sm:text-[11px] font-semibold bg-black/40 sm:bg-black/50 text-white/90 backdrop-blur-xs flex items-center gap-1.5 shadow-xs pointer-events-none group-hover:bg-black/70 transition-colors">
                   <Maximize2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   <span className="hidden sm:inline">Click to expand</span>
                 </div>
@@ -235,7 +244,7 @@ export default function ProductDetailPage({
                           e.stopPropagation();
                           prevImage();
                         }}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black/35 hover:bg-black/60 text-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center focus:outline-none transition-transform active:scale-90 cursor-pointer"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black/35 hover:bg-black/60 text-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center focus:outline-none transition-transform active:scale-90 cursor-pointer"
                         aria-label="Previous photo"
                       >
                         <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -247,7 +256,7 @@ export default function ProductDetailPage({
                           e.stopPropagation();
                           nextImage();
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black/35 hover:bg-black/60 text-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center focus:outline-none transition-transform active:scale-90 cursor-pointer"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black/35 hover:bg-black/60 text-white/90 backdrop-blur-xs shadow-xs flex items-center justify-center focus:outline-none transition-transform active:scale-90 cursor-pointer"
                         aria-label="Next photo"
                       >
                         <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -258,7 +267,7 @@ export default function ProductDetailPage({
 
                 {/* Subtle Counter Badge (Minimal size on mobile) */}
                 {images.length > 1 && (
-                  <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-black/40 sm:bg-black/60 text-white/90 backdrop-blur-xs whitespace-nowrap tracking-wide">
+                  <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-black/40 sm:bg-black/60 text-white/90 backdrop-blur-xs whitespace-nowrap tracking-wide">
                     {activeImageIndex + 1} / {images.length}
                   </div>
                 )}
@@ -271,14 +280,14 @@ export default function ProductDetailPage({
                     <button
                       key={idx}
                       onClick={() => setActiveImageIndex(idx)}
-                      className={`relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all cursor-pointer ${
+                      className={`relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 bg-slate-100 dark:bg-zinc-900 transition-all cursor-pointer p-1 flex items-center justify-center ${
                         activeImageIndex === idx
                           ? 'border-slate-900 dark:border-white ring-2 ring-slate-900/20 dark:ring-white/20'
                           : 'border-slate-200/80 dark:border-white/10 opacity-70 hover:opacity-100'
                       }`}
                       aria-label={`View photo ${idx + 1}`}
                     >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <img src={img} alt="" className="w-full h-full object-contain" />
                     </button>
                   ))}
                 </div>

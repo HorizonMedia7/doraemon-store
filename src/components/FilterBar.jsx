@@ -4,7 +4,6 @@ import {
   Search,
   X,
   SlidersHorizontal,
-  Sparkles,
   Grid2X2,
   LayoutList,
   Rows3
@@ -59,8 +58,8 @@ export default function FilterBar({
             className="pl-8 pr-7 py-2.5 rounded-xl bg-white dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-semibold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-zinc-700 shadow-xs min-h-[44px] transition-colors"
             aria-label="Sort products by"
           >
-            <option value="newest" className="bg-white dark:bg-zinc-900 text-slate-900 dark:text-zinc-100">✨ Newest</option>
-            <option value="name" className="bg-white dark:bg-zinc-900 text-slate-900 dark:text-zinc-100">🔤 Name (A - Z)</option>
+            <option value="newest" className="bg-white dark:bg-zinc-900 text-slate-900 dark:text-zinc-100">Newest</option>
+            <option value="name" className="bg-white dark:bg-zinc-900 text-slate-900 dark:text-zinc-100">Name (A - Z)</option>
           </select>
           <span className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-zinc-500 text-[10px]">▼</span>
         </div>
@@ -75,14 +74,13 @@ export default function FilterBar({
               <button
                 key={cat}
                 onClick={() => onSelectCategory(cat)}
-                className={`relative px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 min-h-[38px] flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:focus-visible:ring-zinc-600 border cursor-pointer ${
+                className={`relative px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 min-h-[38px] flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:focus-visible:ring-zinc-600 border cursor-pointer ${
                   isActive
                     ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-zinc-950 shadow-sm'
                     : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-white/[0.08] dark:hover:text-white shadow-xs'
                 }`}
                 aria-pressed={isActive}
               >
-                {cat === 'All' && <Sparkles className="w-3 h-3 opacity-80" />}
                 <span>{cat}</span>
               </button>
             );
