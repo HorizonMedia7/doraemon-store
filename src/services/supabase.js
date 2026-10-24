@@ -101,8 +101,8 @@ export async function upsertProduct(product) {
     .upsert(payload, { onConflict: 'id' })
     .select();
 
-  // If show_tag column does not exist yet in database (code 42703), safely retry without it
-  if (error && error.code === '42703') {
+  // If show_tag column does not exist yet in database, safely retry without it
+  if (error && (error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('show_tag'))) {
     delete payload.show_tag;
     const retry = await supabase
       .from('products')
