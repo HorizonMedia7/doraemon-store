@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search,
@@ -9,7 +9,7 @@ import {
   Rows3
 } from 'lucide-react';
 
-export default function FilterBar({
+function FilterBar({
   categories = [],
   activeCategory = 'All',
   onSelectCategory,
@@ -164,3 +164,5 @@ export default function FilterBar({
     </div>
   );
 }
+
+export default memo(FilterBar);

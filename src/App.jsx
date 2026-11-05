@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense, useDeferredValue } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Frown, RefreshCw } from 'lucide-react';
 import Navbar from './components/Navbar';
 import FilterBar from './components/FilterBar';
 import ProductCard from './components/ProductCard';
-import ProductDetailPage from './components/ProductDetailPage';
 import Footer from './components/Footer';
 import { getAllCategories } from './utils/productHelpers';
 import { useProductRouting } from './hooks/useProductRouting';
 import { getProducts, isSupabaseConfigured } from './services/supabase';
 import initialProductsData from './data/products';
 
-// Lazy load admin page so regular visitors download a much smaller bundle
+// Lazy load admin page and product details so visitors only download what they need
 const AdminPage = lazy(() => import('./components/admin/AdminPage'));
+const ProductDetailPage = lazy(() => import('./components/ProductDetailPage'));
 
 export default function App() {
   // Initialize with cached products so there is ZERO flash of old products on refresh!
@@ -51,6 +51,7 @@ export default function App() {
   });
 
   const [searchQuery, setSearchQuery] = useState('');
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const [activeCategory, setActiveCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
   const [viewMode, setViewMode] = useState(() => {
@@ -61,15 +62,20 @@ export default function App() {
     }
   });
 
-  // Fetch live products from Supabase and cache them
+  // Fetch live products from Supabase and cache them without redundant re-renders
   const refreshProducts = useCallback(async () => {
     try {
       const data = await getProducts(false); // false = published only
       if (data) {
-        setProducts(data);
-        try {
-          localStorage.setItem('dg_cached_products', JSON.stringify(data));
-        } catch {}
+        setProducts((prev) => {
+          if (prev && prev.length === data.length && JSON.stringify(prev) === JSON.stringify(data)) {
+            return prev;
+          }
+          try {
+            localStorage.setItem('dg_cached_products', JSON.stringify(data));
+          } catch {}
+          return data;
+        });
       }
     } catch (err) {
       console.warn('Failed to load products from database:', err);
@@ -147,9 +153,9 @@ export default function App() {
       );
     }
 
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
+    // Filter by deferred search query for zero-lag 120fps typing
+    if (deferredSearchQuery.trim()) {
+      const q = deferredSearchQuery.toLowerCase().trim();
       result = result.filter((p) => {
         const nameMatch = p.name?.toLowerCase().includes(q);
         const tagMatch = p.tagline?.toLowerCase().includes(q);
@@ -177,7 +183,7 @@ export default function App() {
     });
 
     return result;
-  }, [products, activeCategory, searchQuery, sortBy]);
+  }, [products, activeCategory, deferredSearchQuery, sortBy]);
 
   // Compute container class based on active view mode
   const gridContainerClass = useMemo(() => {
@@ -215,13 +221,29 @@ export default function App() {
 
       {selectedProduct ? (
         /* Full Page Dedicated Product View with Similar Recommendations */
-        <ProductDetailPage
-          product={selectedProduct}
-          allProducts={products}
-          onSelectProduct={openProduct}
-          onViewCategory={handleViewCategory}
-          onBack={closeProduct}
-        />
+        <Suspense
+          fallback={
+            <div className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full animate-pulse space-y-4">
+              <div className="h-9 w-40 bg-slate-100 dark:bg-zinc-900 rounded-xl" />
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 rounded-3xl bg-slate-50 dark:bg-[#11131a] p-6 sm:p-8">
+                <div className="lg:col-span-5 aspect-square bg-slate-200 dark:bg-zinc-800 rounded-2xl" />
+                <div className="lg:col-span-7 space-y-4">
+                  <div className="h-8 w-3/4 bg-slate-200 dark:bg-zinc-800 rounded-lg" />
+                  <div className="h-4 w-1/2 bg-slate-200 dark:bg-zinc-800 rounded-lg" />
+                  <div className="h-12 w-full bg-slate-200 dark:bg-zinc-800 rounded-xl mt-6" />
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <ProductDetailPage
+            product={selectedProduct}
+            allProducts={products}
+            onSelectProduct={openProduct}
+            onViewCategory={handleViewCategory}
+            onBack={closeProduct}
+          />
+        </Suspense>
       ) : (
         /* Main Catalog & Grid View */
         <>

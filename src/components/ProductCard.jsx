@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { isProductNew, getLowestPrice } from '../utils/productHelpers';
 
-export default function ProductCard({
+// Preload the product detail page bundle in background on hover/touch
+const preloadDetail = () => {
+  import('./ProductDetailPage');
+};
+
+function ProductCard({
   product,
   onSelect,
   index = 0,
@@ -30,12 +35,15 @@ export default function ProductCard({
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-20px' }}
-        transition={{ duration: 0.3, delay: Math.min(index * 0.03, 0.2) }}
+        transition={{ duration: 0.25, delay: Math.min(index * 0.02, 0.15) }}
         onClick={() => onSelect(product)}
         onKeyDown={handleKeyDown}
+        onMouseEnter={preloadDetail}
+        onTouchStart={preloadDetail}
         tabIndex={0}
         role="button"
         aria-label={`View store links for ${product.name}`}
+        style={{ contentVisibility: index > 6 ? 'auto' : 'visible', containIntrinsicSize: '120px' }}
         className="group relative flex items-center gap-3 sm:gap-4 rounded-2xl bg-white dark:bg-[#11131a] border border-slate-200/80 dark:border-white/10 p-2.5 sm:p-3 cursor-pointer overflow-hidden shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-zinc-700 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:focus-visible:ring-zinc-600"
       >
         {/* Compact Thumbnail */}
@@ -46,7 +54,9 @@ export default function ProductCard({
           <motion.img
             src={primaryImage}
             alt={product.name}
-            loading="lazy"
+            loading={index < 4 ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={index < 2 ? 'high' : 'auto'}
             onLoad={() => setImageLoaded(true)}
             className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
               imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
@@ -111,12 +121,15 @@ export default function ProductCard({
       initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-20px' }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.25) }}
+      transition={{ duration: 0.25, delay: Math.min(index * 0.02, 0.15) }}
       onClick={() => onSelect(product)}
       onKeyDown={handleKeyDown}
+      onMouseEnter={preloadDetail}
+      onTouchStart={preloadDetail}
       tabIndex={0}
       role="button"
       aria-label={`View store links for ${product.name}`}
+      style={{ contentVisibility: index > 6 ? 'auto' : 'visible', containIntrinsicSize: '320px' }}
       className={`group relative flex flex-col justify-between rounded-2xl bg-white dark:bg-[#11131a] border border-slate-200/80 dark:border-white/10 cursor-pointer overflow-hidden shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-zinc-700 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:focus-visible:ring-zinc-600 ${
         isDetailed ? 'p-3 sm:p-3.5' : 'p-2 sm:p-3.5'
       }`}
@@ -148,7 +161,9 @@ export default function ProductCard({
           <motion.img
             src={primaryImage}
             alt={product.name}
-            loading="lazy"
+            loading={index < 4 ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={index < 2 ? 'high' : 'auto'}
             onLoad={() => setImageLoaded(true)}
             className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
               imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
@@ -207,3 +222,5 @@ export default function ProductCard({
     </motion.article>
   );
 }
+
+export default memo(ProductCard);
