@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Frown, RefreshCw } from 'lucide-react';
 import Navbar from './components/Navbar';
@@ -6,11 +6,13 @@ import FilterBar from './components/FilterBar';
 import ProductCard from './components/ProductCard';
 import ProductDetailPage from './components/ProductDetailPage';
 import Footer from './components/Footer';
-import AdminPage from './components/admin/AdminPage';
 import { getAllCategories } from './utils/productHelpers';
 import { useProductRouting } from './hooks/useProductRouting';
 import { getProducts, isSupabaseConfigured } from './services/supabase';
 import initialProductsData from './data/products';
+
+// Lazy load admin page so regular visitors download a much smaller bundle
+const AdminPage = lazy(() => import('./components/admin/AdminPage'));
 
 export default function App() {
   // Initialize with cached products so there is ZERO flash of old products on refresh!
@@ -190,7 +192,20 @@ export default function App() {
 
   // Render Admin Page if on /admin route
   if (isAdmin) {
-    return <AdminPage onBackToStore={handleBackToStore} />;
+    return (
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center bg-[#090a0f] text-zinc-300">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs font-semibold">Loading Admin...</p>
+            </div>
+          </div>
+        }
+      >
+        <AdminPage onBackToStore={handleBackToStore} />
+      </Suspense>
+    );
   }
 
   return (
